@@ -5,11 +5,12 @@ const SignIn = () => {
   // States for form fields
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [club, setClub] = useState(''); // New state for Club
 
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert(`Email: ${email}, Password: ${password}`);
+    alert(`Email: ${email}, Password: ${password}, Club: ${club}`);
   };
 
   return (
@@ -51,6 +52,27 @@ const SignIn = () => {
               className="w-full px-3 py-2 mt-1 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out transform group-hover:-translate-y-1 group-hover:scale-105"
               placeholder="Enter your password"
             />
+          </div>
+
+          {/* Club Dropdown - New Dropdown */}
+          <div className="relative group">
+            <label htmlFor="club" className="block text-sm font-medium text-gray-300">
+              Club
+            </label>
+            <select
+              id="club"
+              name="club"
+              value={club}
+              onChange={(e) => setClub(e.target.value)}
+              className="w-full px-3 py-2 mt-1 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out transform group-hover:-translate-y-1 group-hover:scale-105"
+            >
+              <option value="" disabled>
+                Select your club
+              </option>
+              <option value="GDSC">GDSC</option>
+              <option value="Media Club">Media Club</option>
+              <option value="Coding Club">Coding Club</option>
+            </select>
           </div>
 
           {/* Submit Button */}

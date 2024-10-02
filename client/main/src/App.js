@@ -4,6 +4,9 @@ import Signup from './signup';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import SignIn from './signin';
 import Lead from './lead';
+import Colead from './colead';
+import Member from './member'
+import Faculty from './faculty'
 
 function App() {
   return (
@@ -17,6 +20,15 @@ function App() {
         </Route>
         <Route path="/lead">
           <Lead/>
+        </Route>
+        <Route path="/colead">
+          <Colead/>
+        </Route>
+        <Route path="/member">
+          <Member/>
+        </Route>
+        <Route path="/faculty">
+          <Faculty/>
         </Route>
       </Router>
     </div>

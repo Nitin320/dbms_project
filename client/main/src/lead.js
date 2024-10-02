@@ -5,10 +5,10 @@ import { FaUserCircle } from 'react-icons/fa'; // Importing user logo
 const Lead = () => {
   // Array for the four functionality boxes
   const functionalities = [
-    { id: 1, name: 'Functionality 1', description: 'Description for Functionality 1' },
-    { id: 2, name: 'Functionality 2', description: 'Description for Functionality 2' },
-    { id: 3, name: 'Functionality 3', description: 'Description for Functionality 3' },
-    { id: 4, name: 'Functionality 4', description: 'Description for Functionality 4' },
+    { id: 1, name: 'Create Event', description: 'Click here to create an event' },
+    { id: 2, name: 'Delete Event', description: 'Click here to delete an event' },
+    { id: 3, name: 'Add Members', description: 'Click here to add a member' },
+    { id: 4, name: 'Delete Members', description: 'Click here to remove a member' },
   ];
 
   return (
