@@ -5,8 +5,8 @@ const Signup = () => {
   // States for form fields
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('User');
-  const [club, setClub] = useState(''); // New state for Club
+  const [role, setRole] = useState(''); // Initialize with an empty string for the default value
+  const [club, setClub] = useState('');
 
   // Handle form submission
   const handleSubmit = (e) => {
@@ -55,7 +55,7 @@ const Signup = () => {
             />
           </div>
 
-          {/* Role Dropdown */}
+          {/* Role Dropdown with Default Option */}
           <div className="relative group">
             <label htmlFor="role" className="block text-sm font-medium text-gray-300">
               Role
@@ -67,13 +67,19 @@ const Signup = () => {
               onChange={(e) => setRole(e.target.value)}
               className="w-full px-3 py-2 mt-1 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out transform group-hover:-translate-y-1 group-hover:scale-105"
             >
+              {/* Default Option */}
+              <option value="" disabled>
+                Select your role
+              </option>
+              {/* Other Options */}
+              <option value="Faculty">Faculty</option>
               <option value="Lead">Lead</option>
               <option value="Co-Lead">Co-Lead</option>
               <option value="Member">Member</option>
             </select>
           </div>
 
-          {/* Club Dropdown - New Dropdown */}
+          {/* Club Dropdown */}
           <div className="relative group">
             <label htmlFor="club" className="block text-sm font-medium text-gray-300">
               Club
@@ -85,9 +91,11 @@ const Signup = () => {
               onChange={(e) => setClub(e.target.value)}
               className="w-full px-3 py-2 mt-1 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out transform group-hover:-translate-y-1 group-hover:scale-105"
             >
+              {/* Default Option */}
               <option value="" disabled>
                 Select your club
               </option>
+              {/* Other Options */}
               <option value="GDSC">GDSC</option>
               <option value="Media Club">Media Club</option>
               <option value="Coding Club">Coding Club</option>
