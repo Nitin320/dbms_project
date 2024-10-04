@@ -7,6 +7,7 @@ import Lead from './lead';
 import Colead from './colead';
 import Member from './member'
 import Faculty from './faculty'
+import Test from './test'
 
 function App() {
   return (
@@ -29,6 +30,9 @@ function App() {
         </Route>
         <Route path="/faculty">
           <Faculty/>
+        </Route>
+        <Route path="/test">
+          <Test/>
         </Route>
       </Router>
     </div>
