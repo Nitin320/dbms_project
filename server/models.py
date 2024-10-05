@@ -43,7 +43,7 @@ class clubs(db.Model):
     fa2 = db.Column(db.Integer, nullable=True)
 
     def __repr__(self):
-        return "{}\t{}\t{}\t{}".format(self.clubid, self.clubname, self.fa1, self.fa2)
+        return "{}\t{}\t{}\t{}".format(self.clubid, self.club_name, self.fa1, self.fa2)
     
 class events(db.Model):
     __tablename__ = 'events'
