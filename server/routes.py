@@ -66,3 +66,4 @@ def register_routes(app, db):
                     "role": None
                 }
             }), 401
+        
