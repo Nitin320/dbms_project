@@ -1,6 +1,18 @@
 from flask import render_template, request, jsonify
 from models import user_credentials, user_details, attendance, clubs, events
 
+def get_clubid_from_clubname(club):
+    club_details = clubs.query.filter_by(club_name = club)
+    for ele in club_details:
+        club_id = ele.clubid
+    return club_id
+
+def get_role_from_clubid_uid(club_id, uid):
+    roles_data = user_details.query.filter_by(uid = uid, clubid = club_id)
+    for ele in roles_data:
+        role = ele.role
+    return role
+
 def register_routes(app, db):
 
     @app.route('/api/cred', methods=['GET'], endpoint = 'test')
@@ -32,13 +44,9 @@ def register_routes(app, db):
                 break
 
         if stat:
-            club_details = clubs.query.filter_by(club_name = club)
-            for ele in club_details:
-                club_id = ele.clubid
-            
-            roles_data = user_details.query.filter_by(uid = uid, clubid = club_id)
-            for ele in roles_data:
-                role = ele.role
+            club_id = get_clubid_from_clubname(club)
+            role = get_role_from_clubid_uid(club_id, uid)
+
             return jsonify({
                 "message": "Sign-in successful!",
                 "data": {
