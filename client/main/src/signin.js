@@ -9,10 +9,38 @@ const SignIn = () => {
   const [club, setClub] = useState(''); // New state for Club
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     alert(`Email: ${email}, Password: ${password}, Club: ${club}`);
-  };
+
+    const userData = {
+      email,
+      password,
+      club,
+    };
+
+    try {
+      const response = await fetch('http://127.0.0.1:5000/api/signin', {
+        method:'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        alert('Incorrect Credentials!');
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log(data); // Handle response data as needed
+      alert('Sign-in successful!'); // Optional: Update based on your needs
+    } catch (error) {
+      console.error('Error sending data:', error);
+      alert('Sign-in failed. Please try again.'); // Optional: Update based on your needs
+    }
+};
 
   return (
     <div className="relative min-h-screen text-white">
