@@ -1,6 +1,5 @@
 // src/SignIn.js
 import React, { useState } from 'react';
-import ShootingStars from './ShootingStars'; // Import the ShootingStars component
 
 const SignIn = () => {
   // States for form fields
@@ -44,7 +43,6 @@ const SignIn = () => {
 
   return (
     <div className="relative min-h-screen text-white">
-      <ShootingStars />
       <div className="absolute inset-0 flex items-center justify-center">
         {/* Form container with adjusted background color */}
         <div className="w-full max-w-md p-8 space-y-8 bg-gray-900 bg-opacity-90 rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-105">
