@@ -8,6 +8,7 @@ import Colead from './colead';
 import Member from './member'
 import Faculty from './faculty'
 import Test from './test'
+import Profile from './profile';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/member" element={<Member/>}></Route>
         <Route path="/faculty" element={<Faculty/>}></Route>
         <Route path="/test" element={<Test/>}></Route>
+        <Route path="/profile" element={<Profile/>}></Route>
         </Routes>
       </Router>
     </div>

@@ -12,6 +12,8 @@ const SignIn = () => {
   const [club, setClub] = useState(''); // New state for Club
   const [loading, setLoading] = useState(false);
 
+  var [role, setRole] = useState('');
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -48,8 +50,23 @@ const SignIn = () => {
 
       const data = await response.json();
       console.log(data); // Handle response data as needed
+      role = data.data.role
+      setRole(role)
+
       alert('Sign-in successful!'); // Optional: Update based on your needs
-      navigate('/lead');
+
+      if(role == "Lead"){
+        navigate('/lead');
+      }
+      else if(role == "Co-Lead"){
+        navigate('/colead');
+      }
+      else if(role == "Faculty"){
+        navigate('/faculty');
+      }
+      else if(role == "Member"){
+        navigate('/member');
+      }
 
     } catch (error) {
       console.error('Error sending data:', error);
