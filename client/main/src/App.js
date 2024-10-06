@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Signup from './signup';
@@ -12,6 +13,7 @@ import Profile from './profile';
 import Events from './events';
 
 function App() {
+
   return (
     <div className="App">
       <Router>

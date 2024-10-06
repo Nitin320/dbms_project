@@ -3,6 +3,8 @@ import Lottie from 'lottie-react';
 import animationData from "./assets/search.json";
 import GradientBackground from './gradientBackground';
 import { useNavigate } from 'react-router-dom';
+import { setRole } from './roleStore';
+
 
 const SignIn = () => {
   // States for form fields
@@ -10,8 +12,6 @@ const SignIn = () => {
   const [password, setPassword] = useState('');
   const [club, setClub] = useState(''); // New state for Club
   const [loading, setLoading] = useState(false);
-
-  const [userRole, setUserRole] = useState('');
 
   const navigate = useNavigate();
 
@@ -49,20 +49,22 @@ const SignIn = () => {
 
       const data = await response.json();
       console.log(data); // Handle response data as needed
-      setUserRole(data.data.role);
+      
       console.log("User role:", data.data.role);
 
       alert('Sign-in successful!'); // Optional: Update based on your needs
 
       // Navigate immediately based on the response's role value
-      const role = data.data.role;
-      if (role === "Lead") {
+      setRole(data.data.role)
+      localStorage.setItem('userRole', data.data.role);
+
+      if (data.data.role === "Lead") {
         navigate('/lead');
-      } else if (role === "Co-Lead") {
+      } else if (data.data.role === "Co-Lead") {
         navigate('/colead');
-      } else if (role === "Faculty") {
+      } else if (data.data.role === "Faculty") {
         navigate('/faculty');
-      } else if (role === "Member") {
+      } else if (data.data.role === "Member") {
         navigate('/member');
       }
       
