@@ -6,6 +6,7 @@ import animationData from "./assets/search.json";
 
 const Signup = () => {
   // States for form fields
+  const [name, setName] = useState(''); // New state for name input
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
@@ -22,11 +23,11 @@ const Signup = () => {
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert(`Email: ${email}, Password: ${password}, Role: ${role}, Club: ${club}`);
+    alert(`Name: ${name}, Email: ${email}, Password: ${password}, Role: ${role}, Club: ${club}`);
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden text-white">
+    <div className="relative min-h-screen overflow-y-auto overflow-x-hidden text-white">
       <GradientBackground /> {/* Include the moving gradient background */}
       
       {loading ? (
@@ -38,13 +39,29 @@ const Signup = () => {
         </div>
       ) : (
         <>
-          
           {/* Form Container */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-full max-w-md p-4 space-y-8 bg-gray-900 bg-opacity-80 rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-105">
+          <div className="absolute inset-0 flex items-center justify-center overflow-y-auto pb-12 pt-[25vh]"> {/* Added py-12 for top and bottom margin */}
+            <div className="w-full max-w-md p-4 space-y-8 bg-gray-900 bg-opacity-80 rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-105 mt-10"> {/* Added mt-10 for top margin */}
               <h2 className="text-3xl font-extrabold text-center">Sign Up</h2>
 
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Name Input Field */}
+                <div className="relative group">
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-200">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    className="w-full px-3 py-2 mt-1 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out transform group-hover:-translate-y-1 group-hover:scale-105"
+                    placeholder="Enter your name"
+                  />
+                </div>
+
                 {/* Email Input Field */}
                 <div className="relative group">
                   <label htmlFor="email" className="block text-sm font-medium text-gray-200">
