@@ -1,12 +1,25 @@
 // src/SignIn.js
-import React, { useState } from 'react';
-import ShootingStars from './ShootingStars'; // Import the ShootingStars component
+import React, { useState, useEffect } from 'react';
+import Lottie from 'lottie-react';
+import animationData from "./assets/search.json";
+import GradientBackground from './gradientBackground';
+import { useNavigate } from 'react-router-dom';
 
 const SignIn = () => {
   // States for form fields
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [club, setClub] = useState(''); // New state for Club
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 3500);
+  }, []);
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -36,6 +49,8 @@ const SignIn = () => {
       const data = await response.json();
       console.log(data); // Handle response data as needed
       alert('Sign-in successful!'); // Optional: Update based on your needs
+      navigate('/lead');
+
     } catch (error) {
       console.error('Error sending data:', error);
       alert('Sign-in failed. Please try again.'); // Optional: Update based on your needs
@@ -44,7 +59,16 @@ const SignIn = () => {
 
   return (
     <div className="relative min-h-screen text-white">
-      <ShootingStars />
+    <GradientBackground /> {/* Include the moving gradient background */}
+      
+      {loading ? (
+        <div className="absolute inset-0 flex justify-center items-center z-50">
+          {/* Background Overlay */}
+          <div className="relative flex items-center justify-center p-6 rounded-full z-50">
+            <Lottie className="h-32 w-32" animationData={animationData} />
+          </div>
+        </div>
+      ) : (
       <div className="absolute inset-0 flex items-center justify-center">
         {/* Form container with adjusted background color */}
         <div className="w-full max-w-md p-8 space-y-8 bg-gray-900 bg-opacity-90 rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-105">
@@ -114,6 +138,7 @@ const SignIn = () => {
           </form>
         </div>
       </div>
+      )}
     </div>
   );
 };

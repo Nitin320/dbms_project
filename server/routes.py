@@ -83,6 +83,7 @@ def register_routes(app, db):
         password = data.get('password')
         club = data.get('club')
         role = data.get('role')
+        name = data.get('name')
 
         #ensuring password is not empty string
         if password == '':
@@ -92,7 +93,8 @@ def register_routes(app, db):
                     "uid" : None,
                     "email": None,
                     "club": None,
-                    "role": None
+                    "role": None, 
+                    "name": None
                 }
             }), 401
 
@@ -104,7 +106,8 @@ def register_routes(app, db):
                     "uid" : None,
                     "email": None,
                     "club": None,
-                    "role": None
+                    "role": None, 
+                    "name": None
                 }
             }), 401
         else:
@@ -119,7 +122,8 @@ def register_routes(app, db):
                     "uid" : None,
                     "email": None,
                     "club": None,
-                    "role": None
+                    "role": None, 
+                    "name": None
                 }
             }), 401
         
@@ -131,7 +135,7 @@ def register_routes(app, db):
 
         #adding user to user_details
         club_id = get_clubid_from_clubname(club)
-        user = user_details(uid = uid, clubid = club_id, role = role)
+        user = user_details(uid = uid, clubid = club_id, role = role, name = name)
         db.session.add(user)
         db.session.commit()
         ins_tbl2 = True 
@@ -143,7 +147,8 @@ def register_routes(app, db):
                     "uid" : uid,
                     "email": username,
                     "club": club,
-                    "role": role
+                    "role": role, 
+                    "name": name
                 }
             }), 200
         else:
@@ -154,6 +159,7 @@ def register_routes(app, db):
                     "email": None, 
                     "club": None, 
                     "role": None, 
+                    "name": None,
                     "ins_tbl1": ins_tbl1, 
                     "ins_tbl2": ins_tbl2
                 }
