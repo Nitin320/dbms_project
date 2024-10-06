@@ -5,7 +5,7 @@ class user_credentials(db.Model):
 
     #defining the columns of the table
 
-    uid = db.Column(db.Integer, primary_key=True)
+    uid = db.Column(db.Text, primary_key=True)
     username = db.Column(db.Text, unique=True, nullable=False)
     password = db.Column(db.Text, nullable=False)
 
@@ -19,7 +19,7 @@ class user_details(db.Model):
 
     #defining the columns of the table
 
-    uid = db.Column(db.Integer)
+    uid = db.Column(db.Text)
     name = db.Column(db.Text, unique=True, nullable=False)
     clubid = db.Column(db.Integer, nullable=False)
     role = db.Column(db.Text, nullable=False, default = 'member')
@@ -70,7 +70,7 @@ class attendance(db.Model):
 
     #defining the columns of the table
 
-    uid = db.Column(db.Integer)
+    uid = db.Column(db.Text)
     eventid = db.Column(db.Integer)
     role = db.Column(db.Text, nullable=False)
     attended = db.Column(db.Boolean, nullable=False, default=False)

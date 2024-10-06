@@ -1,10 +1,12 @@
 from flask import render_template, request, jsonify
+import re
 from models import user_credentials, user_details, attendance, clubs, events
 
 def get_clubid_from_clubname(club):
-    club_details = clubs.query.filter_by(club_name = club)
+    club_details = clubs.query.all()
     for ele in club_details:
-        club_id = ele.clubid
+        if ele.club_name.upper() == club.upper():
+            club_id = ele.clubid
     return club_id
 
 def get_role_from_clubid_uid(club_id, uid):
@@ -66,3 +68,94 @@ def register_routes(app, db):
                     "role": None
                 }
             }), 401
+        
+    @app.route('/api/signup', methods=['GET', 'POST'], endpoint = 'signup')
+    def signup():
+
+        # Get JSON data from the request
+        data = request.get_json()
+
+        ins_tbl1 = False 
+        ins_tbl2 = False
+        
+        # Extract the data
+        username = data.get('email')
+        password = data.get('password')
+        club = data.get('club')
+        role = data.get('role')
+
+        #ensuring password is not empty string
+        if password == '':
+            return jsonify({
+                "message": "Password cannot be empty!",
+                "data": {
+                    "uid" : None,
+                    "email": None,
+                    "club": None,
+                    "role": None
+                }
+            }), 401
+
+        #ensure that email is of form <num><str><num>@mgits.ac.in
+        if not re.match(r'^[0-9]+[a-zA-Z]+[0-9]+@mgits.ac.in$', username):
+            return jsonify({
+                "message": "Invalid email address!",
+                "data": {
+                    "uid" : None,
+                    "email": None,
+                    "club": None,
+                    "role": None
+                }
+            }), 401
+        else:
+            uid = username.split('@')[0]
+        
+        #ensuring record with same email does not exist in user_credentials table already
+        cred = user_credentials.query.filter_by(username = username)
+        for i in cred:
+            return jsonify({
+                "message": "User already exists!",
+                "data": {
+                    "uid" : None,
+                    "email": None,
+                    "club": None,
+                    "role": None
+                }
+            }), 401
+        
+        #adding user to user_credentials 
+        cred = user_credentials(uid = uid, username = username, password = password)
+        db.session.add(cred)
+        db.session.commit()
+        ins_tbl1 = True
+
+        #adding user to user_details
+        club_id = get_clubid_from_clubname(club)
+        user = user_details(uid = uid, clubid = club_id, role = role)
+        db.session.add(user)
+        db.session.commit()
+        ins_tbl2 = True 
+
+        if ins_tbl1 and ins_tbl2:
+            return jsonify({
+                "message": "Sign-up successful!",
+                "data": {
+                    "uid" : uid,
+                    "email": username,
+                    "club": club,
+                    "role": role
+                }
+            }), 200
+        else:
+            return jsonify({
+                "message": "Sign-Up unsucessful", 
+                "data": {
+                    "uid": None, 
+                    "email": None, 
+                    "club": None, 
+                    "role": None, 
+                    "ins_tbl1": ins_tbl1, 
+                    "ins_tbl2": ins_tbl2
+                }
+            }), 401
+        
