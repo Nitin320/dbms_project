@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Lottie from 'lottie-react';
 import animationData from "./assets/search.json";
 import GradientBackground from './gradientBackground';
+import { useNavigate } from 'react-router-dom';
 
 const SignIn = () => {
   // States for form fields
@@ -10,6 +11,8 @@ const SignIn = () => {
   const [password, setPassword] = useState('');
   const [club, setClub] = useState(''); // New state for Club
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
@@ -46,6 +49,8 @@ const SignIn = () => {
       const data = await response.json();
       console.log(data); // Handle response data as needed
       alert('Sign-in successful!'); // Optional: Update based on your needs
+      navigate('/lead');
+
     } catch (error) {
       console.error('Error sending data:', error);
       alert('Sign-in failed. Please try again.'); // Optional: Update based on your needs

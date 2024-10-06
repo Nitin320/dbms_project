@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import GradientBackground from './gradientBackground'; // Import the GradientBackground component
 import Lottie from 'lottie-react';
 import animationData from "./assets/search.json";
+import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
   // States for form fields
@@ -12,6 +13,8 @@ const Signup = () => {
   const [role, setRole] = useState('');
   const [club, setClub] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
@@ -24,6 +27,7 @@ const Signup = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     alert(`Name: ${name}, Email: ${email}, Password: ${password}, Role: ${role}, Club: ${club}`);
+    navigate('/signin');
   };
 
   return (
