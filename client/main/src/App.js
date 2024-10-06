@@ -9,6 +9,7 @@ import Member from './member'
 import Faculty from './faculty'
 import Test from './test'
 import Profile from './profile';
+import Events from './events';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/faculty" element={<Faculty/>}></Route>
         <Route path="/test" element={<Test/>}></Route>
         <Route path="/profile" element={<Profile/>}></Route>
+        <Route path="/events" element={<Events/>}></Route>
         </Routes>
       </Router>
     </div>
