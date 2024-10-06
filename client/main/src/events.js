@@ -1,18 +1,33 @@
 // src/Events.js
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const Events = () => {
-  const [events, setEvents] = React.useState([
-    { id: 1, name: 'Orientation Event', date: '2024-10-12', description: 'Welcome to the new batch!' },
-    { id: 2, name: 'Tech Talk', date: '2024-11-05', description: 'A deep dive into AI technologies.' },
-    { id: 3, name: 'Workshop', date: '2024-12-15', description: 'Hands-on coding workshop for beginners.' },
-  ]);
-  console.log('Events:', events); // Add this inside the Events component before the return statement.
+  const [events, setEvents] = useState([]); // Initialize events as an empty array
+  const [error, setError] = useState(null); // Track error state
 
+  // Function to fetch events from the backend
+  const fetchEvents = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000'); // Set this to ur url BROOOO
+      if (!response.ok) {
+        throw new Error('Failed to fetch events');
+      }
+      const data = await response.json();
+      setEvents(data);
+    } 
+    catch (err) {
+      console.error(err);
+      setError(err.message);
+    }
+  };
+
+  // useEffect to call functionnnn
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center">
-
       {/* Page Title */}
       <h1 className="text-4xl font-bold my-8">Events</h1>
 

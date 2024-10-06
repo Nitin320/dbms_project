@@ -3,7 +3,6 @@ import Lottie from 'lottie-react';
 import animationData from "./assets/search.json";
 import GradientBackground from './gradientBackground';
 import { useNavigate } from 'react-router-dom';
-import { setRole } from './roleStore';
 
 
 const SignIn = () => {
