@@ -54,7 +54,6 @@ const SignIn = () => {
       alert('Sign-in successful!'); // Optional: Update based on your needs
 
       // Navigate immediately based on the response's role value
-      setRole(data.data.role)
       localStorage.setItem('userRole', data.data.role);
 
       if (data.data.role === "Lead") {
