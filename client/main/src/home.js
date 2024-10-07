@@ -35,7 +35,7 @@ const Home = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white px-4">
       {/* Main Lottie Animation Placeholder */}
       <div className="mb-8">
-        <Lottie animationData={animationData} className="h-80 w-80" />
+        <Lottie animationData={animationData} className="h-96 w-96" />
       </div>
 
       {/* Buttons Row */}
