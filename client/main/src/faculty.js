@@ -31,9 +31,6 @@ const Lead = () => {
         <GradientBackground />
       </div>
 
-      <div className="w-full py-4 px-8 flex justify-end bg-gray-800">
-      <a href='/profile'><FaUserCircle className="text-3xl text-gray-300 hover:text-white transition duration-200 ease-in-out cursor-pointer" /></a>
-      </div>
       {loading ? (
         <div className="absolute inset-0 flex justify-center items-center z-50">
           <div className="relative flex items-center justify-center p-6 rounded-full z-50">
@@ -42,6 +39,9 @@ const Lead = () => {
         </div>
       ) : (
       <>
+      <div className="w-full py-4 px-8 flex justify-end bg-gray-800">
+      <a href='/profile'><FaUserCircle className="text-3xl text-gray-300 hover:text-white transition duration-200 ease-in-out cursor-pointer" /></a>
+      </div>
       <div className="flex-grow flex items-center justify-center w-full">
         {/* Grid layout for the boxes */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
