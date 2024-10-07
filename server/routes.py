@@ -49,6 +49,7 @@ def register_routes(app, db):
             club_id = get_clubid_from_clubname(club)
             role = get_role_from_clubid_uid(club_id, uid)
 
+    
             return jsonify({
                 "message": "Sign-in successful!",
                 "data": {
@@ -165,3 +166,24 @@ def register_routes(app, db):
                 }
             }), 401
         
+    @app.route('/api/getEvents', methods=['GET', 'POST'], endpoint = 'getEvent')
+    def getEvents():
+        data = request.get_json()
+        #role = data.get('role')
+        club = data.get('club')
+        club_id = get_clubid_from_clubname(club)
+        event_data = events.query.filter_by(completed = 0, approved = 1)
+        events_list = []
+        for ele in event_data:
+            events_list.append({
+                "event_name": ele.eventname,
+                "event_date": ele.start_date,
+                "venue": ele.venue,
+                "max_volunteers": ele.max_volunteers,
+                "current_volunteers": ele.current_volunteers
+            })
+        return jsonify({
+            "message": "Events fetched successfully",
+            "data": events_list
+        }), 200
+    
