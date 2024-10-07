@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import Lottie from 'lottie-react';
-import animationData from "./assets/search.json";
+import animationData from "./assets/pages.json";
 import GradientBackground from './gradientBackground';
 
 const Lead = () => {
@@ -14,15 +14,14 @@ const Lead = () => {
   ];
 
   const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false); // State to control modal visibility
-  const [eventName, setEventName] = useState(''); // State for event name
-  const [startDate, setStartDate] = useState(''); // State for start date
-  const [endDate, setEndDate] = useState(''); // State for end date
-  const [eventTime, setEventTime] = useState(''); // State for time
-  const [venue, setVenue] = useState(''); // State for venue
-  const [maxVolunteers, setMaxVolunteers] = useState(''); // State for max volunteers
+  const [showModal, setShowModal] = useState(false);
+  const [eventName, setEventName] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [eventTime, setEventTime] = useState('');
+  const [venue, setVenue] = useState('');
+  const [maxVolunteers, setMaxVolunteers] = useState('');
 
-  // Function to handle creating a new event
   const handleCreateEvent = () => {
     const newEvent = {
       eventName,
@@ -34,7 +33,6 @@ const Lead = () => {
     };
 
     console.log('Creating new event:', newEvent);
-
     //WRITE YOUR CODE HERE
 
     setEventName('');
@@ -46,9 +44,8 @@ const Lead = () => {
     setShowModal(false);
   };
 
-  // Function to handle the modal opening based on functionality click
   const handleFunctionClick = (funcId) => {
-    if (funcId === 1) { // Check if 'Create Event' button is clicked
+    if (funcId === 1) {
       setShowModal(true);
     }
   };
@@ -62,7 +59,6 @@ const Lead = () => {
 
   return (
     <div className="relative min-h-screen bg-gray-900 text-white flex flex-col items-center overflow-hidden">
-      {/* Adjusted position and z-index of GradientBackground */}
       <div className="absolute inset-0 -z-10">
         <GradientBackground />
       </div>
@@ -70,43 +66,42 @@ const Lead = () => {
       {loading ? (
         <div className="absolute inset-0 flex justify-center items-center z-50">
           <div className="relative flex items-center justify-center p-6 rounded-full z-50">
-            <Lottie className="h-32 w-32" animationData={animationData} />
+            <Lottie className="h-64 w-64" animationData={animationData} />
           </div>
         </div>
       ) : (
         <>
-          {/* Header Section */}
           <div className="w-full py-4 px-8 flex justify-end bg-gray-800 z-20">
-          <a href='/profile'><FaUserCircle className="text-3xl text-gray-300 hover:text-white transition duration-200 ease-in-out cursor-pointer" /></a>
+            <a href='/profile'>
+              <FaUserCircle className="text-3xl text-gray-300 hover:text-white transition duration-200 ease-in-out cursor-pointer" />
+            </a>
           </div>
 
-          {/* Main content with four functionality boxes */}
-          <div className="w-full max-w-6xl mt-16 p-8 grid grid-cols-1 md:grid-cols-2 gap-8 z-20">
-            {functionalities.map((func) => (
-              <div
-                key={func.id}
-                className="relative group p-8 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg"
-                onClick={() => handleFunctionClick(func.id)} // Handle click for functionality
-              >
-                <h3 className="text-2xl font-semibold mb-4">{func.name}</h3>
-                <p className="text-gray-400">{func.description}</p>
+          {/* Main content with centralized functionality boxes */}
+          <div className="w-full max-w-6xl mt-16 p-8 flex justify-center z-20"> {/* Centering the grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full"> {/* Removed z-20 from the grid */}
+              {functionalities.map((func) => (
+                <div
+                  key={func.id}
+                  className="relative group p-8 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg"
+                  onClick={() => handleFunctionClick(func.id)} 
+                >
+                  <h3 className="text-2xl font-semibold mb-4">{func.name}</h3>
+                  <p className="text-gray-400">{func.description}</p>
 
-                {/* Hover effect */}
-                <div className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-30 transition duration-300 ease-in-out rounded-lg"></div>
-              </div>
-            ))}
+                  {/* Hover effect */}
+                  <div className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-30 transition duration-300 ease-in-out rounded-lg"></div>
+                </div>
+              ))}
+            </div>
           </div>
         </>
       )}
 
-      {/* Modal for creating an event */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-          {/* Scrollable Modal Container */}
           <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-11/12 max-w-lg max-h-[90vh] overflow-y-auto hide-scrollbar">
             <h2 className="text-3xl font-bold mb-6">Create Event</h2>
-
-            {/* Form fields */}
             <div className="space-y-4">
               <div>
                 <label className="block text-lg font-semibold mb-1">Event Name</label>
