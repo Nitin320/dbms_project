@@ -54,6 +54,7 @@ const SignIn = () => {
       alert('Sign-in successful!'); // Optional: Update based on your needs
 
       // Navigate immediately based on the response's role value
+      console.log(data.data.club)
       localStorage.setItem('userRole', data.data.role);
       localStorage.setItem('club', data.data.club);
 

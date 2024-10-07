@@ -20,7 +20,7 @@ const Lead = () => {
         {/* Content grid for the functionality box */}
         <div className="w-full max-w-md p-8">
           {functionalities.map((func) => (
-            <div
+            <a href='/memberEvents'><div
               key={func.id}
               className="relative group p-8 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg flex items-center justify-center"
             >
@@ -31,7 +31,7 @@ const Lead = () => {
 
               {/* Hover effect */}
               <div className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-30 transition duration-300 ease-in-out rounded-lg"></div>
-            </div>
+            </div></a>
           ))}
         </div>
       </div>
