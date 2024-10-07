@@ -14,6 +14,44 @@ const Lead = () => {
   ];
 
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false); // State to control modal visibility
+  const [eventName, setEventName] = useState(''); // State for event name
+  const [startDate, setStartDate] = useState(''); // State for start date
+  const [endDate, setEndDate] = useState(''); // State for end date
+  const [eventTime, setEventTime] = useState(''); // State for time
+  const [venue, setVenue] = useState(''); // State for venue
+  const [maxVolunteers, setMaxVolunteers] = useState(''); // State for max volunteers
+
+  // Function to handle creating a new event
+  const handleCreateEvent = () => {
+    const newEvent = {
+      eventName,
+      startDate,
+      endDate,
+      eventTime,
+      venue,
+      maxVolunteers,
+    };
+
+    console.log('Creating new event:', newEvent);
+
+    //WRITE YOUR CODE HERE
+    
+    setEventName('');
+    setStartDate('');
+    setEndDate('');
+    setEventTime('');
+    setVenue('');
+    setMaxVolunteers('');
+    setShowModal(false);
+  };
+
+  // Function to handle the modal opening based on functionality click
+  const handleFunctionClick = (funcId) => {
+    if (funcId === 1) { // Check if 'Create Event' button is clicked
+      setShowModal(true);
+    }
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -48,6 +86,7 @@ const Lead = () => {
               <div
                 key={func.id}
                 className="relative group p-8 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg"
+                onClick={() => handleFunctionClick(func.id)} // Handle click for functionality
               >
                 <h3 className="text-2xl font-semibold mb-4">{func.name}</h3>
                 <p className="text-gray-400">{func.description}</p>
@@ -59,6 +98,101 @@ const Lead = () => {
           </div>
         </>
       )}
+
+      {/* Modal for creating an event */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          {/* Scrollable Modal Container */}
+          <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-11/12 max-w-lg max-h-[90vh] overflow-y-auto hide-scrollbar">
+            <h2 className="text-3xl font-bold mb-6">Create Event</h2>
+
+            {/* Form fields */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-lg font-semibold mb-1">Event Name</label>
+                <input
+                  type="text"
+                  value={eventName}
+                  onChange={(e) => setEventName(e.target.value)}
+                  className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-lg font-semibold mb-1">Start Date</label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-lg font-semibold mb-1">End Date</label>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-lg font-semibold mb-1">Start Time</label>
+                <input
+                  type="time"
+                  value={eventTime}
+                  onChange={(e) => setEventTime(e.target.value)}
+                  className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-lg font-semibold mb-1">Venue</label>
+                <input
+                  type="text"
+                  value={venue}
+                  onChange={(e) => setVenue(e.target.value)}
+                  className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-lg font-semibold mb-1">Max Volunteers</label>
+                <input
+                  type="number"
+                  value={maxVolunteers}
+                  onChange={(e) => setMaxVolunteers(e.target.value)}
+                  className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Modal buttons - Centralized */}
+            <div className="flex justify-center space-x-6 mt-8">
+              <button
+                className="py-2 px-4 bg-green-500 rounded-lg hover:bg-green-600 transition duration-200"
+                onClick={handleCreateEvent} // Handle form submission
+              >
+                Create
+              </button>
+              <button
+                className="py-2 px-4 bg-red-500 rounded-lg hover:bg-red-600 transition duration-200"
+                onClick={() => setShowModal(false)} // Handle modal close
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CSS for hiding scrollbar */}
+      <style jsx>{`
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .hide-scrollbar {
+          -ms-overflow-style: none; /* IE and Edge */
+          scrollbar-width: none; /* Firefox */
+        }
+      `}</style>
     </div>
   );
 };
