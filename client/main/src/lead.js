@@ -36,7 +36,7 @@ const Lead = () => {
     console.log('Creating new event:', newEvent);
 
     //WRITE YOUR CODE HERE
-    
+
     setEventName('');
     setStartDate('');
     setEndDate('');
@@ -77,7 +77,7 @@ const Lead = () => {
         <>
           {/* Header Section */}
           <div className="w-full py-4 px-8 flex justify-end bg-gray-800 z-20">
-            <FaUserCircle className="text-3xl text-gray-300 hover:text-white transition duration-200 ease-in-out cursor-pointer" />
+          <a href='/profile'><FaUserCircle className="text-3xl text-gray-300 hover:text-white transition duration-200 ease-in-out cursor-pointer" /></a>
           </div>
 
           {/* Main content with four functionality boxes */}

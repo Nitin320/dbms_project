@@ -12,7 +12,7 @@ const Lead = () => {
     <div className="min-h-screen bg-gray-900 text-white flex flex-col">
       {/* Top bar with user logo */}
       <div className="w-full py-4 px-8 flex justify-end bg-gray-800">
-        <FaUserCircle className="text-3xl text-gray-300 hover:text-white transition duration-200 ease-in-out cursor-pointer" />
+      <a href='/profile'><FaUserCircle className="text-3xl text-gray-300 hover:text-white transition duration-200 ease-in-out cursor-pointer" /></a>
       </div>
 
       {/* Main content wrapper with flexbox to centralize content */}
