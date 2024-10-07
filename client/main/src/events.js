@@ -8,7 +8,17 @@ const Events = () => {
   // Function to fetch events from the backend
   const fetchEvents = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000'); // Set this to ur url BROOOO
+      const role = localStorage.getItem('userRole');
+      console.log(localStorage.getItem('userRole')); 
+      const club = localStorage.getItem('club');
+      console.log(localStorage.getItem('club'));// Should print the correct role value
+      const response = await fetch('http://127.0.0.1:5000/api/getEvents', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({role, club}), // Send role as data in the request body
+      }); // Set this to ur url BROOOO
       if (!response.ok) {
         throw new Error('Failed to fetch events');
       }
@@ -52,3 +62,6 @@ const Events = () => {
 };
 
 export default Events;
+
+
+

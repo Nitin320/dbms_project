@@ -55,6 +55,7 @@ const SignIn = () => {
 
       // Navigate immediately based on the response's role value
       localStorage.setItem('userRole', data.data.role);
+      localStorage.setItem('club', data.data.club);
 
       if (data.data.role === "Lead") {
         navigate('/lead');
