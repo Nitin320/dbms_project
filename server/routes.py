@@ -48,6 +48,9 @@ def register_routes(app, db):
         if stat:
             club_id = get_clubid_from_clubname(club)
             role = get_role_from_clubid_uid(club_id, uid)
+            user = user_details.query.filter_by(uid = uid, clubid = club_id)
+            for i in user:
+                name = i.name
 
     
             return jsonify({
@@ -56,7 +59,8 @@ def register_routes(app, db):
                     "uid" : uid,
                     "email": username,
                     "club": club,
-                    "role": role
+                    "role": role, 
+                    "name": name
                 }
             }), 200
         else:
@@ -66,7 +70,8 @@ def register_routes(app, db):
                     "uid" : None,
                     "email": None,
                     "club": None,
-                    "role": None
+                    "role": None, 
+                    "name": None
                 }
             }), 401
         
