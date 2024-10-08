@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const Profile = () => {
   const [profilePicture, setProfilePicture] = useState(
-    localStorage.getItem('profilePicture') || `https://ui-avatars.com/api/?name=${localStorage.getItem('name') || 'No Name'}&background=random&size=100`
+    localStorage.getItem('pfp') || `https://ui-avatars.com/api/?name=${localStorage.getItem('name') || 'No Name'}&background=random&size=100`
   );
 
   const role = localStorage.getItem('userRole') || 'No Role Found';

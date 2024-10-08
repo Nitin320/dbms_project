@@ -61,6 +61,10 @@ const SignIn = () => {
       localStorage.setItem('name', data.data.name);
       localStorage.setItem('uid', data.data.uid);
 
+      if (data.data.pfp) {
+        localStorage.setItem('pfp', data.data.pfp);
+      }
+
       if (data.data.role === "Lead") {
         navigate('/lead');
       } else if (data.data.role === "Co-Lead") {
