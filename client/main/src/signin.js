@@ -59,6 +59,7 @@ const SignIn = () => {
       localStorage.setItem('club', data.data.club);
       localStorage.setItem('mail', data.data.email);
       localStorage.setItem('name', data.data.name);
+      localStorage.setItem('uid', data.data.uid);
 
       if (data.data.role === "Lead") {
         navigate('/lead');

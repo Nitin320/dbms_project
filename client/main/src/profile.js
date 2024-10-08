@@ -1,5 +1,4 @@
-// src/Profile.js
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 const Profile = () => {
   const [profilePicture, setProfilePicture] = useState(
@@ -11,17 +10,60 @@ const Profile = () => {
   const mail = localStorage.getItem('mail') || 'No Email Found';
   const name = localStorage.getItem('name') || 'No Name Found';
 
+  // Function to convert file to base64
+  const convertFileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      if (file && file instanceof Blob) {  // Validate that `file` is defined and is a Blob (File is a type of Blob)
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          resolve(reader.result);
+        };
+        reader.onerror = (error) => {
+          reject(error);
+        };
+        reader.readAsDataURL(file); // This converts the file to a base64 string
+      } else {
+        reject(new Error("Invalid file type or file is null")); // Reject if file is invalid
+      }
+    });
+  };
+
   // Function to handle image upload
-  const handleProfilePictureUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result;
-        setProfilePicture(result);
-        localStorage.setItem('profilePicture', result); // Save the uploaded image in localStorage
+  const handleProfilePictureUpload = async (event) => {
+    const file = event.target.files[0]; // Get the selected file
+    if (!file) return; // Exit if no file is selected
+
+    try {
+      const base64String = await convertFileToBase64(file); // Convert file to base64 string
+      const fileName = file.name; // Get the file name
+
+      // Create JSON payload containing the filename and base64 image string
+      const jsonPayload = {
+        uid: localStorage.getItem('uid'),
+        filename: fileName,
+        image: base64String,
       };
-      reader.readAsDataURL(file); // Read file as a data URL
+
+      const response = await fetch('http://127.0.0.1:5000/api/uploadPfp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`, // Include token if needed
+        },
+        body: JSON.stringify(jsonPayload), // Send the payload as JSON
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Profile picture uploaded successfully:', data);
+        // Optionally update the profile picture URL in localStorage if the server returns it
+        localStorage.setItem('profilePicture', data.profilePictureUrl);
+        setProfilePicture(data.profilePictureUrl); // Update the local profile picture
+      } else {
+        throw new Error('Failed to upload profile picture');
+      }
+    } catch (error) {
+      console.error('Error uploading profile picture:', error);
     }
   };
 

@@ -1,5 +1,6 @@
 from flask import render_template, request, jsonify
 import re
+import base64
 from models import user_credentials, user_details, attendance, clubs, events
 
 def get_clubid_from_clubname(club):
@@ -37,6 +38,8 @@ def register_routes(app, db):
 
         stat = False
         uid = None
+        pfp = None
+        pfp_name = None
         cred = user_credentials.query.filter_by(username = username)
 
         for i in cred:
@@ -51,6 +54,13 @@ def register_routes(app, db):
             user = user_details.query.filter_by(uid = uid, clubid = club_id)
             for i in user:
                 name = i.name
+                pfp = i.pfp
+                pfp_name = i.pfp_name
+                #converting pfp to base 64 string
+                if pfp:
+                    pfp = base64.b64encode(pfp).decode('utf-8')
+                    pfp = 'data:image/{};base64,'.format(pfp_name.split('.')[1]) + pfp
+                
 
     
             return jsonify({
@@ -60,7 +70,9 @@ def register_routes(app, db):
                     "email": username,
                     "club": club,
                     "role": role, 
-                    "name": name
+                    "name": name, 
+                    "pfp": pfp, 
+                    "pfp_name": pfp_name
                 }
             }), 200
         else:
@@ -71,7 +83,9 @@ def register_routes(app, db):
                     "email": None,
                     "club": None,
                     "role": None, 
-                    "name": None
+                    "name": None, 
+                    "pfp": pfp, 
+                    "pfp_name": pfp_name
                 }
             }), 401
         
@@ -192,3 +206,37 @@ def register_routes(app, db):
             "data": events_list
         }), 200
     
+    @app.route('/api/uploadPfp', methods=['GET', 'POST'], endpoint = 'uploadPfp')
+    def uploadPfp():
+        # Parse the incoming JSON data
+        data = request.get_json()
+        uid = data.get('uid')
+        image_data = data.get('image')  # base64 image string
+        filename = data.get('filename')
+
+        #implement some method to compress the image
+
+        # Decode the base64 image (remove the data URL prefix if it exists)
+        if image_data.startswith('data:image/'):
+            # Strip the data URL prefix (e.g. 'data:image/png;base64,')
+            image_data = image_data.split(',')[1]
+
+        # Convert the base64 string to bytes
+        image_bytes = base64.b64decode(image_data)
+
+        # Query the users from the database
+        users = user_details.query.filter_by(uid=uid)
+        
+        # Update the profile picture for all matched users
+        for user in users:
+            user.pfp = image_bytes  # Store the image as bytes
+            user.pfp_name = filename  # Save the filename
+        
+        # Commit the changes to the database
+        db.session.commit()
+
+        # Return success message
+        return jsonify({
+            "message": "Successfully saved profile picture",
+            "data": None
+        }), 200
