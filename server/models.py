@@ -23,6 +23,8 @@ class user_details(db.Model):
     name = db.Column(db.Text, unique=True, nullable=False)
     clubid = db.Column(db.Integer, nullable=False)
     role = db.Column(db.Text, nullable=False, default = 'member')
+    pfp = db.Column(db.LargeBinary, nullable=True, default = None)
+    pfp_name = db.Column(db.Text, nullable=True, default = None)
     #(fa1,fa2,member,colead,lead,admin,temp) possible values for roles
 
     __table_args__ = (
@@ -81,5 +83,4 @@ class attendance(db.Model):
 
     def __repr__(self):
         return "{}\t{}\t{}".format(self.uid, self.eventid, self.attended)
-
     
