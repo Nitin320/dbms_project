@@ -28,6 +28,26 @@ const Profile = () => {
     });
   };
 
+  const convertBase64ToFile = (base64String, fileName) => {
+    // Split the base64 string into data and content type
+    const arr = base64String.split(',');
+    const mimeType = arr[0].match(/:(.*?);/)[1];
+    const byteString = atob(arr[1]);
+    const byteNumbers = new Array(byteString.length);
+  
+    // Convert each character in the byteString into a byte
+    for (let i = 0; i < byteString.length; i++) {
+      byteNumbers[i] = byteString.charCodeAt(i);
+    }
+  
+    // Create a new Uint8Array with the byte numbers
+    const byteArray = new Uint8Array(byteNumbers);
+  
+    // Create a Blob object from the byte array and specify its MIME type
+    return new File([byteArray], fileName, { type: mimeType });
+  };
+  
+
   // Function to handle image upload
   const handleProfilePictureUpload = async (event) => {
     const file = event.target.files[0]; // Get the selected file
@@ -57,8 +77,8 @@ const Profile = () => {
         const data = await response.json();
         console.log('Profile picture uploaded successfully:', data);
         // Optionally update the profile picture URL in localStorage if the server returns it
-        localStorage.setItem('profilePicture', data.profilePictureUrl);
-        setProfilePicture(data.profilePictureUrl); // Update the local profile picture
+        localStorage.setItem('pfp', data.data.pfp);
+        setProfilePicture(data.data.pfp); // Update the local profile picture
       } else {
         throw new Error('Failed to upload profile picture');
       }

@@ -59,7 +59,10 @@ def register_routes(app, db):
                 #converting pfp to base 64 string
                 if pfp:
                     pfp = base64.b64encode(pfp).decode('utf-8')
-                    pfp = 'data:image/{};base64,'.format(pfp_name.split('.')[1]) + pfp
+                    ext = pfp_name.split('.')[1]
+                    if ext == 'jpg':
+                        ext = 'jpeg'
+                    pfp = 'data:image/{};base64,'.format(ext) + pfp
                 
 
     
@@ -219,10 +222,10 @@ def register_routes(app, db):
         # Decode the base64 image (remove the data URL prefix if it exists)
         if image_data.startswith('data:image/'):
             # Strip the data URL prefix (e.g. 'data:image/png;base64,')
-            image_data = image_data.split(',')[1]
+            image_data1 = image_data.split(',')[1]
 
         # Convert the base64 string to bytes
-        image_bytes = base64.b64decode(image_data)
+        image_bytes = base64.b64decode(image_data1)
 
         # Query the users from the database
         users = user_details.query.filter_by(uid=uid)
@@ -238,5 +241,7 @@ def register_routes(app, db):
         # Return success message
         return jsonify({
             "message": "Successfully saved profile picture",
-            "data": None
+            "data": {
+                'pfp': image_data,
+            }
         }), 200
