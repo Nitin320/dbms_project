@@ -190,6 +190,7 @@ def register_routes(app, db):
         
     @app.route('/api/getEvents', methods=['GET', 'POST'], endpoint = 'getEvent')
     def getEvents():
+        clibid = 99
         data = request.get_json()
         #role = data.get('role')
         club = data.get('club')
@@ -245,3 +246,52 @@ def register_routes(app, db):
                 'pfp': image_data,
             }
         }), 200
+    
+    @app.route('/api/create_event', methods=['GET', 'POST'])
+    def create_event():
+        try:
+            data = request.get_json()
+            print(f"Received data: {data}")  # Log the incoming data
+
+            # Extract event details from the request
+            event_name = data.get('eventName')
+            start_date = data.get('startDate')
+            end_date = data.get('endDate')
+            event_time = data.get('eventTime')
+            venue = data.get('venue')
+            max_volunteers = data.get('maxVolunteers')
+
+            # Ensure required fields are provided
+            if not event_name or not start_date or not venue:
+                print(f"Missing required fields: {data}")
+                return jsonify({
+                    "message": "Event name, start date, and venue are required."
+                }), 400
+
+            # Create a new event record
+            new_event = events(
+                clubid = 99,
+                eventname=event_name,
+                start_date=start_date,
+                end_date=end_date,
+                time=event_time,
+                venue=venue,
+                max_volunteers=max_volunteers,
+                current_volunteers=0,  # Initially 0
+                approved=1,  # Assuming the lead's event is approved by default
+                completed=0  # Event is not completed yet
+            )
+
+            # Add to the database
+            db.session.add(new_event)
+            db.session.commit()
+
+            return jsonify({
+                "message": "Event created successfully!"
+            }), 200
+
+        except Exception as e:
+            print(f"Error occurred while creating event: {str(e)}")  # Log the error
+            return jsonify({
+                "message": "An error occurred while creating the event."
+            }), 500
