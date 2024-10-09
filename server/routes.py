@@ -33,6 +33,7 @@ def register_routes(app, db):
         username = data.get('email')
         password = data.get('password')
         club = data.get('club')
+        club_id = data.get('club_id')
 
         # Here, you can process the sign-in logic (e.g., verify credentials)
 
@@ -72,6 +73,7 @@ def register_routes(app, db):
                     "uid" : uid,
                     "email": username,
                     "club": club,
+                    "clubid":club_id,
                     "role": role, 
                     "name": name, 
                     "pfp": pfp, 
@@ -254,6 +256,7 @@ def register_routes(app, db):
             print(f"Received data: {data}")  # Log the incoming data
 
             # Extract event details from the request
+            club_id = data.get('club_id')  # Check if this is None or empty
             event_name = data.get('eventName')
             start_date = data.get('startDate')
             end_date = data.get('endDate')
@@ -262,15 +265,15 @@ def register_routes(app, db):
             max_volunteers = data.get('maxVolunteers')
 
             # Ensure required fields are provided
-            if not event_name or not start_date or not venue:
+            if not event_name or not start_date or not venue or club_id is None:
                 print(f"Missing required fields: {data}")
                 return jsonify({
-                    "message": "Event name, start date, and venue are required."
+                    "message": "Event name, start date, venue, and club ID are required."
                 }), 400
 
             # Create a new event record
             new_event = events(
-                clubid = 99,
+                clubid=club_id,
                 eventname=event_name,
                 start_date=start_date,
                 end_date=end_date,
