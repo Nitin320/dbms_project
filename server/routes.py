@@ -190,7 +190,6 @@ def register_routes(app, db):
         
     @app.route('/api/getEvents', methods=['GET', 'POST'], endpoint = 'getEvent')
     def getEvents():
-        clibid = 99
         data = request.get_json()
         #role = data.get('role')
         club = data.get('club')
@@ -251,7 +250,7 @@ def register_routes(app, db):
     def create_event():
         try:
             data = request.get_json()
-            print(f"Received data: {data}")  # Log the incoming data
+            print(f"Received data: {data}")  # Log the incoming data. 
 
             # Extract event details from the request
             event_name = data.get('eventName')
@@ -270,7 +269,7 @@ def register_routes(app, db):
 
             # Create a new event record
             new_event = events(
-                clubid = 99,
+                clubid = 99,   #you can get the club name from the frontend. write a function to convert that to club id and use that value here
                 eventname=event_name,
                 start_date=start_date,
                 end_date=end_date,
@@ -278,7 +277,7 @@ def register_routes(app, db):
                 venue=venue,
                 max_volunteers=max_volunteers,
                 current_volunteers=0,  # Initially 0
-                approved=1,  # Assuming the lead's event is approved by default
+                approved=1,  # Assuming the lead's event is approved by default. make this 0. event should be approved by faculty right?
                 completed=0  # Event is not completed yet
             )
 
