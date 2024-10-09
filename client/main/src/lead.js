@@ -22,20 +22,14 @@ const Lead = () => {
   const [eventTime, setEventTime] = useState('');
   const [venue, setVenue] = useState('');
   const [maxVolunteers, setMaxVolunteers] = useState('');
-  const [clubId, setClubId] = useState('');
 
-  const handleSignIn = async (userData) => {
-    // After successful sign-in
-    const { clubId } = userData; // Assuming userData contains clubid
-    setClubId(clubId); // Store club ID in state
-  };
 
   const handleCreateEvent = async () => {
     // Fetch club_id from local storage
     const club_id = localStorage.getItem('club_id');
 
     const newEvent = {
-      club_id: club_id,  // Include club_id in the payload
+      club: localStorage.getItem('club'),  // Include club_id in the payload
       eventName,
       startDate,
       endDate,

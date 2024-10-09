@@ -256,7 +256,8 @@ def register_routes(app, db):
             print(f"Received data: {data}")  # Log the incoming data
 
             # Extract event details from the request
-            club_id = data.get('club_id')  # Check if this is None or empty
+            club = data.get('club')  # Check if this is None or empty
+            club_id = get_clubid_from_clubname(club)
             event_name = data.get('eventName')
             start_date = data.get('startDate')
             end_date = data.get('endDate')
