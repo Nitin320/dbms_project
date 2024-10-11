@@ -472,3 +472,23 @@ def register_routes(app, db):
         db.session.commit()
 
         return jsonify({"message": "Volunteer applied successfully"}), 200
+    
+    @app.route('/api/deleteEvent', methods=['POST'])
+    def delete_event():
+        data = request.get_json()
+        event_id = data.get('eventId')
+        print(event_id)
+        print(data)
+
+        if not event_id:
+            return jsonify({"message": "Event ID is required."}), 400
+
+        event = events.query.filter_by(eventid=event_id).first()
+
+        if not event:
+            return jsonify({"message": "Event not found."}), 404
+
+        db.session.delete(event)
+        db.session.commit()
+
+        return jsonify({"message": "Event deleted successfully."}), 200    
