@@ -4,7 +4,6 @@ import { FaUserCircle } from 'react-icons/fa';
 import Lottie from 'lottie-react';
 import animationData from "./assets/pages.json";
 import GradientBackground from './gradientBackground';
-import { useLocation } from 'react-router-dom';
 
 const Lead = () => {
   const functionalities = [
@@ -15,12 +14,42 @@ const Lead = () => {
 
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // New state for delete modal
+  const [events, setEvents] = useState([]); // State to hold events
+  const [error, setError] = useState('');
+
   const [eventName, setEventName] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [eventTime, setEventTime] = useState('');
   const [venue, setVenue] = useState('');
   const [maxVolunteers, setMaxVolunteers] = useState('');
+
+  // Fetch events function
+  const fetchEvents = async () => {
+    try {
+      const role = localStorage.getItem('userRole');
+      const club = localStorage.getItem('club');
+
+      const response = await fetch('http://127.0.0.1:5000/api/getEvents', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ role, club }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch events');
+      }
+
+      const data = await response.json();
+      setEvents(data.data); // Store the events array in the state
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    }
+  };
 
   const handleCreateEvent = async () => {
     const newEvent = {
@@ -63,19 +92,44 @@ const Lead = () => {
       console.error('An error occurred:', error);
       alert('An error occurred while creating the event. Please try again.');
     } finally {
-      setLoading(false); // Stop loading indicator
-      setShowModal(false); // Close the modal after submission
+      setLoading(false);
+      setShowModal(false);
+      fetchEvents(); // Fetch events again after creation
+    }
+  };
+
+  const handleDeleteEvent = async (eventId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/delete_event/${eventId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        alert('Event deleted successfully!');
+        fetchEvents(); // Refresh the events list after deletion
+      } else {
+        alert('Failed to delete the event');
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+      alert('An error occurred while deleting the event.');
+    } finally {
+      setShowDeleteModal(false); // Close delete modal
     }
   };
 
   const handleFunctionClick = (funcId) => {
     if (funcId === 1) {
       setShowModal(true);
+    } else if (funcId === 2) {
+      setShowDeleteModal(true); // Open delete modal
+      fetchEvents(); // Fetch events when opening delete modal
     }
   };
 
   useEffect(() => {
     setLoading(true);
+    fetchEvents(); // Fetch events on component mount
     const timer = setTimeout(() => {
       setLoading(false);
     }, 3500);
@@ -135,6 +189,7 @@ const Lead = () => {
         </>
       )}
 
+      {/* Modal for Creating Event */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
           <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-11/12 max-w-lg max-h-[90vh] overflow-y-auto hide-scrollbar">
@@ -209,6 +264,38 @@ const Lead = () => {
                 onClick={() => setShowModal(false)} // Handle modal close
               >
                 Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal for Deleting Events */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-11/12 max-w-lg max-h-[90vh] overflow-y-auto hide-scrollbar">
+            <h2 className="text-3xl font-bold mb-6">Delete Events</h2>
+            {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
+            <ul className="space-y-4">
+              {events.map((event) => (
+                <li key={event.id} className="flex justify-between items-center p-4 bg-gray-700 rounded-lg">
+                  <span>{event.event_name}</span>
+                  <button
+                    onClick={() => handleDeleteEvent(event.id)}
+                    className="py-1 px-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-200"
+                  >
+                    Delete
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            <div className="flex justify-center space-x-6 mt-8">
+              <button
+                className="py-2 px-4 bg-red-500 rounded-lg hover:bg-red-600 transition duration-200"
+                onClick={() => setShowDeleteModal(false)} // Handle modal close
+              >
+                Close
               </button>
             </div>
           </div>
