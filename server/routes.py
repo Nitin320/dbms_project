@@ -424,3 +424,23 @@ def register_routes(app, db):
                 "message": "Event rejected successfully"
             }), 200
        
+    @app.route('/api/delete_member', methods=['GET', 'POST'], endpoint = 'delete_member')
+    def delete_member():
+        data = request.get_json()
+        uid = data.get('memberId')
+        club = data.get('club')
+        club_id = get_clubid_from_clubname(club)
+        print(data)
+
+        members = user_details.query.filter_by(uid = uid, clubid = club_id)
+        if members:
+            for member in members:
+                db.session.delete(member)
+            db.session.commit()
+            return jsonify({
+                "message": "Member {} deleted successfully".format(uid)
+            }), 200
+        else:
+            return jsonify({
+                "message": "Member not found"
+            }), 404
