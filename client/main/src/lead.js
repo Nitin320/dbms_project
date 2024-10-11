@@ -123,8 +123,8 @@ const Lead = () => {
 
   const handleDeleteEvent = async (eventId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/delete_event/${eventId}`, {
-        method: 'DELETE',
+      const response = await fetch(`http://localhost:5000/api/delete_event/`, {
+        method: 'POST',
       });
 
       if (response.ok) {
@@ -142,9 +142,16 @@ const Lead = () => {
   };
 
   const handleDeleteMember = async (memberId) => {
+    const data ={ memberId, 
+      club: localStorage.getItem('club')
+     }
     try {
-      const response = await fetch(`http://localhost:5000/api/delete_member/${memberId}`, {
-        method: 'DELETE',
+      const response = await fetch(`http://localhost:5000/api/delete_member`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
       });
 
       if (response.ok) {
@@ -355,7 +362,7 @@ const Lead = () => {
                   <li key={member.id} className="flex justify-between items-center p-4 bg-gray-700 rounded-md shadow">
                     <span className="text-gray-200">{member.name}</span>
                     <button
-                      onClick={() => handleDeleteMember(member.id)}
+                      onClick={() => handleDeleteMember(member.uid)}
                       className="bg-red-600 text-white p-2 rounded hover:bg-red-500 transition duration-300"
                     >
                       Delete
