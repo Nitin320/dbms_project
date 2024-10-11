@@ -47,9 +47,30 @@ const MemberEvents = () => {
   };
 
   // Placeholder function for registering for the event
-  const handleRegister = () => {
-    console.log(`Registering for event: ${selectedEvent.event_name}`);
-    alert(`You have successfully registered for ${selectedEvent.event_name}`);
+  const handleRegister = async () => {
+    try {
+      const payload = {
+        event_id: selectedEvent.event_id, 
+        user_id: localStorage.getItem('uid')
+      }
+        const response = await fetch('http://127.0.0.1:5000/api/applyParticipant', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to apply for vParticipation');
+      }
+  
+      const data = await response.json();
+      alert(data.message); // Show success message
+    } catch (error) {
+      console.error(error);
+      alert('Error applying as Participant. Please try again.');
+    }
   };
 
   // Placeholder function for applying to volunteer for the event
