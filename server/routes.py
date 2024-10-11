@@ -444,3 +444,31 @@ def register_routes(app, db):
             return jsonify({
                 "message": "Member not found"
             }), 404
+        
+    @app.route('/api/applyVolunteer', methods=['GET', 'POST'], endpoint = 'applyVolunteer')
+    def applyVolunteer():
+        data = request.get_json()
+        uid = data.get('user_id')  # Adjusted to match the frontend key
+        event_id = data.get('event_id')
+
+        # Fetch the event using the event_id
+        event = events.query.filter_by(eventid=event_id).first()
+        
+        if not event:
+            return jsonify({"message": "Event not found"}), 404
+
+        # Check if the event is already full
+        if event.current_volunteers >= event.max_volunteers:
+            return jsonify({"message": "Event is already full"}), 400
+
+        # Increment the current volunteers
+        event.current_volunteers += 1
+
+        # Create an attendance record
+        attendance_record = attendance(uid=uid, eventid=event_id, role="Volunteer", attended=False)
+        db.session.add(attendance_record)
+
+        # Commit the changes to the database
+        db.session.commit()
+
+        return jsonify({"message": "Volunteer applied successfully"}), 200
