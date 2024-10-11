@@ -42,5 +42,14 @@
     background-size: 150% 150%;
     animation: horizontal-move 12s ease-in-out infinite; /* Faster speed */
   }
+/* Add this CSS to your styles */
+
+/* Hide scrollbar for Webkit browsers */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+/* Apply overflow-y:auto to allow scrolling */
+
   
   

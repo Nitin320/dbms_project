@@ -5,7 +5,7 @@ import Lottie from 'lottie-react';
 import animationData from "./assets/pages.json";
 import GradientBackground from './gradientBackground';
 
-const Lead = () => {
+const Faculty = () => {
   const functionalities = [
     { id: 1, name: 'Change Lead', description: 'Click here to change the lead' },
     { id: 2, name: 'Change Co-Lead', description: 'Click here to change the co-lead' },
@@ -198,7 +198,7 @@ const Lead = () => {
             <div className="flex justify-center mt-6">
               <button
                 className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
-                onClick={() => setShowApproveModal(false)}
+                onClick={() => setShowApproveModal(false)} // Close modal
               >
                 Close
               </button>
@@ -231,14 +231,14 @@ const Lead = () => {
                     </div>
                   ))
                 ) : (
-                  <p>No members available for changing lead.</p>
+                  <p>No members available to assign as lead.</p>
                 )}
               </div>
             )}
             <div className="flex justify-center mt-6">
               <button
                 className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
-                onClick={() => setShowChangeLeadModal(false)}
+                onClick={() => setShowChangeLeadModal(false)} // Close modal
               >
                 Close
               </button>
@@ -271,14 +271,14 @@ const Lead = () => {
                     </div>
                   ))
                 ) : (
-                  <p>No members available for changing co-lead.</p>
+                  <p>No members available to assign as co-lead.</p>
                 )}
               </div>
             )}
             <div className="flex justify-center mt-6">
               <button
                 className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
-                onClick={() => setShowChangeCoLeadModal(false)}
+                onClick={() => setShowChangeCoLeadModal(false)} // Close modal
               >
                 Close
               </button>
@@ -292,4 +292,4 @@ const Lead = () => {
   );
 };
 
-export default Lead;
+export default Faculty;
