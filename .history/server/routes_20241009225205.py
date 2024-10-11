@@ -2,6 +2,8 @@ from flask import render_template, request, jsonify
 import re
 import base64
 from models import user_credentials, user_details, attendance, clubs, events
+from utils import generate_unique_club_id
+import random
 
 def get_clubid_from_clubname(club):
     club_details = clubs.query.all()
@@ -11,21 +13,20 @@ def get_clubid_from_clubname(club):
     return club_id
 
 def get_role_from_clubid_uid(club_id, uid):
-    roles_data = user_details.query.filter_by(uid = uid, clubid = club_id)
+    roles_data = user_details.query.filter_by(uid=uid, clubid=club_id)
     for ele in roles_data:
         role = ele.role
     return role
 
 def register_routes(app, db):
 
-    @app.route('/api/cred', methods=['GET'], endpoint = 'test')
+    @app.route('/api/cred', methods=['GET'], endpoint='test')
     def index():
         cred = user_credentials.query.first()
         return jsonify({"username": cred.username, "password": cred.password, "uid": cred.uid})
 
-    @app.route('/api/signin', methods=['GET', 'POST'], endpoint = 'signin')
+    @app.route('/api/signin', methods=['GET', 'POST'], endpoint='signin')
     def signin():
-
         # Get JSON data from the request
         data = request.get_json()
         
@@ -33,15 +34,14 @@ def register_routes(app, db):
         username = data.get('email')
         password = data.get('password')
         club = data.get('club')
-        club_id = data.get('club_id')
-
+        
         # Here, you can process the sign-in logic (e.g., verify credentials)
 
         stat = False
         uid = None
         pfp = None
         pfp_name = None
-        cred = user_credentials.query.filter_by(username = username)
+        cred = user_credentials.query.filter_by(username=username)
 
         for i in cred:
             if i.password == password:
@@ -50,33 +50,29 @@ def register_routes(app, db):
                 break
 
         if stat:
-            club_id = get_clubid_from_clubname(club)
-            role = get_role_from_clubid_uid(club_id, uid)
-            user = user_details.query.filter_by(uid = uid, clubid = club_id)
+            #role = get_role_from_clubid_uid(club_id, uid)
+            #user = user_details.query.filter_by(uid=uid, clubid=club_id)
             for i in user:
                 name = i.name
                 pfp = i.pfp
                 pfp_name = i.pfp_name
-                #converting pfp to base 64 string
+                # converting pfp to base 64 string
                 if pfp:
                     pfp = base64.b64encode(pfp).decode('utf-8')
                     ext = pfp_name.split('.')[1]
                     if ext == 'jpg':
                         ext = 'jpeg'
                     pfp = 'data:image/{};base64,'.format(ext) + pfp
-                
 
-    
             return jsonify({
                 "message": "Sign-in successful!",
                 "data": {
-                    "uid" : uid,
+                    "uid": uid,
                     "email": username,
                     "club": club,
-                    "clubid":club_id,
-                    "role": role, 
-                    "name": name, 
-                    "pfp": pfp, 
+                    "role": role,
+                    "name": name,
+                    "pfp": pfp,
                     "pfp_name": pfp_name
                 }
             }), 200
@@ -84,19 +80,18 @@ def register_routes(app, db):
             return jsonify({
                 "message": "Sign-in failed!",
                 "data": {
-                    "uid" : None,
+                    "uid": None,
                     "email": None,
                     "club": None,
-                    "role": None, 
-                    "name": None, 
-                    "pfp": pfp, 
+                    "role": None,
+                    "name": None,
+                    "pfp": pfp,
                     "pfp_name": pfp_name
                 }
             }), 401
-        
-    @app.route('/api/signup', methods=['GET', 'POST'], endpoint = 'signup')
-    def signup():
 
+    @app.route('/api/signup', methods=['GET', 'POST'], endpoint='signup')
+    def signup():
         # Get JSON data from the request
         data = request.get_json()
 
@@ -110,12 +105,12 @@ def register_routes(app, db):
         role = data.get('role')
         name = data.get('name')
 
-        #ensuring password is not empty string
+        # ensuring password is not empty string
         if password == '':
             return jsonify({
                 "message": "Password cannot be empty!",
                 "data": {
-                    "uid" : None,
+                    "uid": None,
                     "email": None,
                     "club": None,
                     "role": None, 
@@ -123,12 +118,12 @@ def register_routes(app, db):
                 }
             }), 401
 
-        #ensure that email is of form <num><str><num>@mgits.ac.in
+        # ensure that email is of form <num><str><num>@mgits.ac.in
         if not re.match(r'^[0-9]+[a-zA-Z]+[0-9]+@mgits.ac.in$', username):
             return jsonify({
                 "message": "Invalid email address!",
                 "data": {
-                    "uid" : None,
+                    "uid": None,
                     "email": None,
                     "club": None,
                     "role": None, 
@@ -138,13 +133,13 @@ def register_routes(app, db):
         else:
             uid = username.split('@')[0]
         
-        #ensuring record with same email does not exist in user_credentials table already
-        cred = user_credentials.query.filter_by(username = username)
+        # ensuring record with same email does not exist in user_credentials table already
+        cred = user_credentials.query.filter_by(username=username)
         for i in cred:
             return jsonify({
                 "message": "User already exists!",
                 "data": {
-                    "uid" : None,
+                    "uid": None,
                     "email": None,
                     "club": None,
                     "role": None, 
@@ -152,15 +147,15 @@ def register_routes(app, db):
                 }
             }), 401
         
-        #adding user to user_credentials 
-        cred = user_credentials(uid = uid, username = username, password = password)
+        # adding user to user_credentials 
+        cred = user_credentials(uid=uid, username=username, password=password)
         db.session.add(cred)
         db.session.commit()
         ins_tbl1 = True
 
-        #adding user to user_details
+        # adding user to user_details
         club_id = get_clubid_from_clubname(club)
-        user = user_details(uid = uid, clubid = club_id, role = role, name = name)
+        user = user_details(uid=uid, clubid=club_id, role=role, name=name)
         db.session.add(user)
         db.session.commit()
         ins_tbl2 = True 
@@ -169,7 +164,7 @@ def register_routes(app, db):
             return jsonify({
                 "message": "Sign-up successful!",
                 "data": {
-                    "uid" : uid,
+                    "uid": uid,
                     "email": username,
                     "club": club,
                     "role": role, 
@@ -178,7 +173,7 @@ def register_routes(app, db):
             }), 200
         else:
             return jsonify({
-                "message": "Sign-Up unsucessful", 
+                "message": "Sign-Up unsuccessful", 
                 "data": {
                     "uid": None, 
                     "email": None, 
@@ -189,20 +184,19 @@ def register_routes(app, db):
                     "ins_tbl2": ins_tbl2
                 }
             }), 401
-        
-    @app.route('/api/getEvents', methods=['GET', 'POST'], endpoint = 'getEvent')
+
+    @app.route('/api/getEvents', methods=['GET', 'POST'], endpoint='getEvent')
     def getEvents():
         data = request.get_json()
+        # role = data.get('role')
         club = data.get('club')
         club_id = get_clubid_from_clubname(club)
-        event_data = events.query.filter_by(completed = 0, approved = 1)
+        event_data = events.query.filter_by(completed=0, approved=1)
         events_list = []
         for ele in event_data:
             events_list.append({
-                "event_id": ele.eventid,
                 "event_name": ele.eventname,
                 "event_date": ele.start_date,
-                "timr": ele.time,
                 "venue": ele.venue,
                 "max_volunteers": ele.max_volunteers,
                 "current_volunteers": ele.current_volunteers
@@ -211,30 +205,8 @@ def register_routes(app, db):
             "message": "Events fetched successfully",
             "data": events_list
         }), 200
-    
-    @app.route('/api/getUnapprovedEvents', methods=['GET', 'POST'], endpoint = 'getUnapprovedEvent')
-    def getUnapprovedEvents():
-        data = request.get_json()
-        club = data.get('club')
-        club_id = get_clubid_from_clubname(club)
-        event_data = events.query.filter_by(completed = 0, approved = 0, clubid = club_id)
-        events_list = []
-        for ele in event_data:
-            events_list.append({
-                "event_id": ele.eventid,
-                "event_name": ele.eventname,
-                "event_date": ele.start_date,
-                "timr": ele.time,
-                "venue": ele.venue,
-                "max_volunteers": ele.max_volunteers,
-                "current_volunteers": ele.current_volunteers
-            })
-        return jsonify({
-            "message": "Events fetched successfully",
-            "data": events_list
-        }), 200
-    
-    @app.route('/api/uploadPfp', methods=['GET', 'POST'], endpoint = 'uploadPfp')
+
+    @app.route('/api/uploadPfp', methods=['GET', 'POST'], endpoint='uploadPfp')
     def uploadPfp():
         # Parse the incoming JSON data
         data = request.get_json()
@@ -242,7 +214,7 @@ def register_routes(app, db):
         image_data = data.get('image')  # base64 image string
         filename = data.get('filename')
 
-        #implement some method to compress the image
+        # implement some method to compress the image
 
         # Decode the base64 image (remove the data URL prefix if it exists)
         if image_data.startswith('data:image/'):
@@ -270,29 +242,44 @@ def register_routes(app, db):
                 'pfp': image_data,
             }
         }), 200
-    
+
     @app.route('/api/create_event', methods=['GET', 'POST'])
     def create_event():
         try:
             data = request.get_json()
-            print(f"Received data: {data}")  # Log the incoming data
+            print(f"Received data: {data}")  # Log the incoming data.
 
             # Extract event details from the request
-            club = data.get('club')  # Check if this is None or empty
-            club_id = get_clubid_from_clubname(club)
             event_name = data.get('eventName')
             start_date = data.get('startDate')
             end_date = data.get('endDate')
             event_time = data.get('eventTime')
             venue = data.get('venue')
             max_volunteers = data.get('maxVolunteers')
+            club_name = data.get('club')  # Add club name from the request
 
             # Ensure required fields are provided
-            if not event_name or not start_date or not venue or club_id is None:
+            if not event_name or not start_date or not venue or not club_name:
                 print(f"Missing required fields: {data}")
                 return jsonify({
-                    "message": "Event name, start date, venue, and club ID are required."
+                    "message": "Event name, start date, venue, and club name are required."
                 }), 400
+
+            # Get the existing club IDs from the database
+            existing_club_ids = [club.clubid for club in clubs.query.all()]
+
+            # Generate a unique club ID
+            club_id = generate_unique_club_id(existing_club_ids)
+
+            # Check if the club already exists
+            existing_club = clubs.query.filter_by(club_name=club_name).first()
+            if not existing_club:
+                # If it doesn't exist, create a new club
+                new_club = clubs(club_name=club_name, clubid=club_id)
+                db.session.add(new_club)
+                db.session.commit()
+            else:
+                club_id = existing_club.clubid  # Use the existing club ID if it exists
 
             # Create a new event record
             new_event = events(
@@ -304,7 +291,7 @@ def register_routes(app, db):
                 venue=venue,
                 max_volunteers=max_volunteers,
                 current_volunteers=0,  # Initially 0
-                approved=0,  # Assuming the lead's event is approved by default
+                approved=1,  # Assuming the lead's event is approved by default.
                 completed=0  # Event is not completed yet
             )
 
@@ -321,126 +308,3 @@ def register_routes(app, db):
             return jsonify({
                 "message": "An error occurred while creating the event."
             }), 500
-
-    @app.route('/api/getMembers', methods=['GET', 'POST'], endpoint = 'getMembers')
-    def getMembers():
-        data = request.get_json()
-        club = data.get('club')
-        club_id = get_clubid_from_clubname(club)
-        members_data = user_details.query.filter_by(clubid = club_id, role = "Member")
-        members_list = []
-        for ele in members_data:
-            members_list.append({
-                "uid": ele.uid,
-                "name": ele.name,
-                "role": ele.role
-            })
-        return jsonify({
-            "message": "Members fetched successfully",
-            "data": members_list
-        }), 200
-    
-    @app.route('/api/getPfp', methods=['GET', 'POST'], endpoint = 'getPfp')
-    def getPfp():
-        data = request.get_json()
-        uid = data.get('uid')
-        user = user_details.query.filter_by(uid = uid)
-        pfp = None
-        pfp_name = None
-        for ele in user:
-            pfp = ele.pfp
-            pfp_name = ele.pfp_name
-            if pfp:
-                pfp = base64.b64encode(pfp).decode('utf-8')
-                ext = pfp_name.split('.')[1]
-                if ext == 'jpg':
-                    ext = 'jpeg'
-                pfp = 'data:image/{};base64,'.format(ext) + pfp
-        return jsonify({
-            "message": "Profile picture fetched successfully",
-            "data": {
-                "pfp": pfp,
-                "pfp_name": pfp_name
-            }
-        }), 200
-    
-    @app.route('/api/assignLead', methods=['GET', 'POST'], endpoint = 'assignLead')
-    def assignLead():
-        data = request.get_json()
-        uid = data.get('memberId')
-        club = data.get('club')
-        club_id = get_clubid_from_clubname(club)
-        #fetch current lead
-        lead = user_details.query.filter_by(clubid = club_id, role = "Lead")
-        for ele in lead:
-            ele.role = "Member"
-        #assign new lead
-        user = user_details.query.filter_by(uid = uid, clubid = club_id)
-        for ele in user:
-            ele.role = "Lead"
-        db.session.commit()
-        return jsonify({
-            "message": "Lead assigned successfully"
-        }), 200
-        
-    @app.route('/api/assignColead', methods=['GET', 'POST'], endpoint = 'assignColead')
-    def assignColead():
-        data = request.get_json()
-        uid = data.get('memberId')
-        club = data.get('club')
-        club_id = get_clubid_from_clubname(club)
-        #fetch current lead
-        lead = user_details.query.filter_by(clubid = club_id, role = "Co-Lead")
-        for ele in lead:
-            ele.role = "Member"
-        #assign new lead
-        user = user_details.query.filter_by(uid = uid, clubid = club_id)
-        for ele in user:
-            ele.role = "Co-Lead"
-        db.session.commit()
-        return jsonify({
-            "message": "Co-Lead assigned successfully"
-        }), 200
-
-    @app.route('/api/eventApproval', methods=['GET', 'POST'], endpoint = 'eventApproval')
-    def eventApproval():
-        data = request.get_json()
-        if data.get('action') == 'approve':
-            event_id = data.get('eventId')
-            event = events.query.filter_by(eventid = event_id)
-            for ele in event:
-                ele.approved = 1
-            db.session.commit()
-            return jsonify({
-                "message": "Event approved successfully"
-            }), 200
-        elif data.get('action') == 'reject':
-            event_id = data.get('eventId')
-            event = events.query.filter_by(eventid = event_id)
-            for ele in event:
-                db.session.delete(ele)
-            db.session.commit()
-            return jsonify({
-                "message": "Event rejected successfully"
-            }), 200
-
-    @app.route('/api/deleteEvent', methods=['POST'])
-    def delete_event():
-        data = request.get_json()
-        event_id = data.get('eventId')
-        print(event_id)
-        print(data)
-
-        if not event_id:
-            return jsonify({"message": "Event ID is required."}), 400
-
-        event = events.query.filter_by(eventid=event_id).first()
-
-        if not event:
-            return jsonify({"message": "Event not found."}), 404
-
-        db.session.delete(event)
-        db.session.commit()
-
-        return jsonify({"message": "Event deleted successfully."}), 200
-
