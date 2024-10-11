@@ -14,7 +14,10 @@ const Lead = () => {
 
   const [loading, setLoading] = useState(false);
   const [showApproveModal, setShowApproveModal] = useState(false); // Modal state for approving events
+  const [showChangeLeadModal, setShowChangeLeadModal] = useState(false); // Modal state for changing lead
+  const [showChangeCoLeadModal, setShowChangeCoLeadModal] = useState(false); // Modal state for changing co-lead
   const [events, setEvents] = useState([]); // Event data state
+  const [members, setMembers] = useState([]); // Members data state
   const [error, setError] = useState(null); // Error state for fetching
 
   useEffect(() => {
@@ -45,10 +48,42 @@ const Lead = () => {
     }
   };
 
+  const fetchMembers = async () => {
+    try {
+      const club = localStorage.getItem('club');
+      const response = await fetch('http://127.0.0.1:5000/api/getMembers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ club }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch members');
+      }
+      const data = await response.json();
+      setMembers(data.data);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   // Function to handle the "Approve Events" button click
   const handleApproveEventsClick = () => {
     fetchEvents(); // Fetch events when the button is clicked
     setShowApproveModal(true); // Show the modal
+  };
+
+  // Function to handle the "Change Lead" button click
+  const handleChangeLeadClick = () => {
+    fetchMembers(); // Fetch members when the button is clicked
+    setShowChangeLeadModal(true); // Show the modal
+  };
+
+  // Function to handle the "Change Co-Lead" button click
+  const handleChangeCoLeadClick = () => {
+    fetchMembers(); // Fetch members when the button is clicked
+    setShowChangeCoLeadModal(true); // Show the modal
   };
 
   // Function to handle approval or rejection
@@ -60,6 +95,18 @@ const Lead = () => {
       console.log(`Event ${eventId} rejected`);
       // Add your logic for rejecting the event here
     }
+  };
+
+  // Function to handle assigning a lead to a member
+  const handleAssignLead = (memberId) => {
+    console.log(`Lead assigned to member ${memberId}`);
+    // Add your logic for assigning the lead here
+  };
+
+  // Function to handle assigning a co-lead to a member
+  const handleAssignCoLead = (memberId) => {
+    console.log(`Co-lead assigned to member ${memberId}`);
+    // Add your logic for assigning the co-lead here
   };
 
   return (
@@ -89,6 +136,7 @@ const Lead = () => {
             <div
               key={func.id}
               className="relative group p-8 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg"
+              onClick={func.id === 1 ? handleChangeLeadClick : handleChangeCoLeadClick} // Trigger respective modals
             >
               <h3 className="text-2xl font-semibold mb-4">{func.name}</h3>
               <p className="text-gray-400">{func.description}</p>
@@ -147,10 +195,90 @@ const Lead = () => {
                 )}
               </div>
             )}
-            <div className="flex justify-end mt-6">
+            <div className="flex justify-center mt-6">
               <button
-                className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg"
+                className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
                 onClick={() => setShowApproveModal(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Change Lead Modal */}
+      {showChangeLeadModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-11/12 max-w-3xl max-h-[90vh] overflow-y-auto hide-scrollbar">
+            <h2 className="text-3xl font-bold mb-6">Change Lead</h2>
+            {error ? (
+              <p className="text-red-500">{error}</p>
+            ) : (
+              <div className="space-y-4">
+                {members.length > 0 ? (
+                  members.map((member) => (
+                    <div key={member.id} className="flex justify-between items-center bg-gray-700 p-4 rounded-lg">
+                      <div>
+                        <h3 className="text-xl font-semibold">{member.name}</h3>
+                      </div>
+                      <button
+                        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
+                        onClick={() => handleAssignLead(member.id)}
+                      >
+                        Assign Lead
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <p>No members available for changing lead.</p>
+                )}
+              </div>
+            )}
+            <div className="flex justify-center mt-6">
+              <button
+                className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
+                onClick={() => setShowChangeLeadModal(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Change Co-Lead Modal */}
+      {showChangeCoLeadModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-11/12 max-w-3xl max-h-[90vh] overflow-y-auto hide-scrollbar">
+            <h2 className="text-3xl font-bold mb-6">Change Co-Lead</h2>
+            {error ? (
+              <p className="text-red-500">{error}</p>
+            ) : (
+              <div className="space-y-4">
+                {members.length > 0 ? (
+                  members.map((member) => (
+                    <div key={member.id} className="flex justify-between items-center bg-gray-700 p-4 rounded-lg">
+                      <div>
+                        <h3 className="text-xl font-semibold">{member.name}</h3>
+                      </div>
+                      <button
+                        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
+                        onClick={() => handleAssignCoLead(member.id)}
+                      >
+                        Assign Co-Lead
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <p>No members available for changing co-lead.</p>
+                )}
+              </div>
+            )}
+            <div className="flex justify-center mt-6">
+              <button
+                className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
+                onClick={() => setShowChangeCoLeadModal(false)}
               >
                 Close
               </button>
