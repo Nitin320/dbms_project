@@ -192,17 +192,39 @@ def register_routes(app, db):
         
     @app.route('/api/getEvents', methods=['GET', 'POST'], endpoint = 'getEvent')
     def getEvents():
-        clibid = 99
         data = request.get_json()
-        #role = data.get('role')
         club = data.get('club')
         club_id = get_clubid_from_clubname(club)
         event_data = events.query.filter_by(completed = 0, approved = 1)
         events_list = []
         for ele in event_data:
             events_list.append({
+                "event_id": ele.eventid,
                 "event_name": ele.eventname,
                 "event_date": ele.start_date,
+                "timr": ele.time,
+                "venue": ele.venue,
+                "max_volunteers": ele.max_volunteers,
+                "current_volunteers": ele.current_volunteers
+            })
+        return jsonify({
+            "message": "Events fetched successfully",
+            "data": events_list
+        }), 200
+    
+    @app.route('/api/getUnapprovedEvents', methods=['GET', 'POST'], endpoint = 'getUnapprovedEvent')
+    def getUnapprovedEvents():
+        data = request.get_json()
+        club = data.get('club')
+        club_id = get_clubid_from_clubname(club)
+        event_data = events.query.filter_by(completed = 0, approved = 0, clubid = club_id)
+        events_list = []
+        for ele in event_data:
+            events_list.append({
+                "event_id": ele.eventid,
+                "event_name": ele.eventname,
+                "event_date": ele.start_date,
+                "timr": ele.time,
                 "venue": ele.venue,
                 "max_volunteers": ele.max_volunteers,
                 "current_volunteers": ele.current_volunteers
@@ -282,7 +304,7 @@ def register_routes(app, db):
                 venue=venue,
                 max_volunteers=max_volunteers,
                 current_volunteers=0,  # Initially 0
-                approved=1,  # Assuming the lead's event is approved by default
+                approved=0,  # Assuming the lead's event is approved by default
                 completed=0  # Event is not completed yet
             )
 
@@ -380,4 +402,25 @@ def register_routes(app, db):
             "message": "Co-Lead assigned successfully"
         }), 200
 
+    @app.route('/api/eventApproval', methods=['GET', 'POST'], endpoint = 'eventApproval')
+    def eventApproval():
+        data = request.get_json()
+        if data.get('action') == 'approve':
+            event_id = data.get('eventId')
+            event = events.query.filter_by(eventid = event_id)
+            for ele in event:
+                ele.approved = 1
+            db.session.commit()
+            return jsonify({
+                "message": "Event approved successfully"
+            }), 200
+        elif data.get('action') == 'reject':
+            event_id = data.get('eventId')
+            event = events.query.filter_by(eventid = event_id)
+            for ele in event:
+                db.session.delete(ele)
+            db.session.commit()
+            return jsonify({
+                "message": "Event rejected successfully"
+            }), 200
        

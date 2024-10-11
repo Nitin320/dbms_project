@@ -4,6 +4,7 @@ import { FaUserCircle } from 'react-icons/fa';
 import Lottie from 'lottie-react';
 import animationData from "./assets/pages.json";
 import GradientBackground from './gradientBackground';
+import { useLocation } from 'react-router-dom';
 
 const Lead = () => {
   const functionalities = [
@@ -62,8 +63,8 @@ const Lead = () => {
       console.error('An error occurred:', error);
       alert('An error occurred while creating the event. Please try again.');
     } finally {
-      setLoading(false);
-      setShowModal(false);
+      setLoading(false); // Stop loading indicator
+      setShowModal(false); // Close the modal after submission
     }
   };
 
@@ -199,13 +200,13 @@ const Lead = () => {
             <div className="flex justify-center space-x-6 mt-8">
               <button
                 className="py-2 px-4 bg-green-500 rounded-lg hover:bg-green-600 transition duration-200"
-                onClick={handleCreateEvent}
+                onClick={handleCreateEvent} // Handle form submission
               >
                 Create
               </button>
               <button
                 className="py-2 px-4 bg-red-500 rounded-lg hover:bg-red-600 transition duration-200"
-                onClick={() => setShowModal(false)}
+                onClick={() => setShowModal(false)} // Handle modal close
               >
                 Cancel
               </button>

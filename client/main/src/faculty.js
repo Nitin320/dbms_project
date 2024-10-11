@@ -31,7 +31,7 @@ const Faculty = () => {
     try {
       const role = localStorage.getItem('userRole');
       const club = localStorage.getItem('club');
-      const response = await fetch('http://127.0.0.1:5000/api/getEvents', {
+      const response = await fetch('http://127.0.0.1:5000/api/getUnapprovedEvents', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -87,13 +87,32 @@ const Faculty = () => {
   };
 
   // Function to handle approval or rejection
-  const handleEventAction = (eventId, action) => {
-    if (action === 'approve') {
-      console.log(`Event ${eventId} approved`);
+  const handleEventAction = async (eventId, action) => {
+    console.log(`Event ${eventId} approved`);
       // Add your logic for approving the event here
-    } else if (action === 'reject') {
-      console.log(`Event ${eventId} rejected`);
-      // Add your logic for rejecting the event here
+    try {
+      const club = localStorage.getItem('club');
+      const response = await fetch(`http://127.0.0.1:5000/api/eventApproval`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // Specify JSON content
+        },
+        body: JSON.stringify({ eventId, club, action}), // Stringify the data
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Failed to ${action} event`);
+      }
+  
+      const data = await response.json();
+      console.log(data.message);
+      alert(`Event ${action}d successfully!`);
+  
+      // Refetch events to update the UI
+      fetchEvents();
+    } catch (error) {
+      console.error('Error handling event action:', error);
+      alert(`Error ${action}ing event. Please try again.`);
     }
   };
 
@@ -219,13 +238,13 @@ const Faculty = () => {
                       <div className="flex space-x-4">
                         <button
                           className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg"
-                          onClick={() => handleEventAction(event.id, 'approve')}
+                          onClick={() => handleEventAction(event.event_id, 'approve')}
                         >
                           Approve
                         </button>
                         <button
                           className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
-                          onClick={() => handleEventAction(event.id, 'reject')}
+                          onClick={() => handleEventAction(event.event_id, 'reject')}
                         >
                           Reject
                         </button>
