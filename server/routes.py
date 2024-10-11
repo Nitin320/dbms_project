@@ -213,7 +213,7 @@ def register_routes(app, db):
         }), 200
     
     @app.route('/api/getUnapprovedEvents', methods=['GET', 'POST'], endpoint = 'getUnapprovedEvent')
-    def getEvents():
+    def getUnapprovedEvents():
         data = request.get_json()
         club = data.get('club')
         club_id = get_clubid_from_clubname(club)
@@ -304,7 +304,7 @@ def register_routes(app, db):
                 venue=venue,
                 max_volunteers=max_volunteers,
                 current_volunteers=0,  # Initially 0
-                approved=1,  # Assuming the lead's event is approved by default
+                approved=0,  # Assuming the lead's event is approved by default
                 completed=0  # Event is not completed yet
             )
 
@@ -402,4 +402,25 @@ def register_routes(app, db):
             "message": "Co-Lead assigned successfully"
         }), 200
 
+    @app.route('/api/eventApproval', methods=['GET', 'POST'], endpoint = 'eventApproval')
+    def eventApproval():
+        data = request.get_json()
+        if data.get('action') == 'approve':
+            event_id = data.get('eventId')
+            event = events.query.filter_by(eventid = event_id)
+            for ele in event:
+                ele.approved = 1
+            db.session.commit()
+            return jsonify({
+                "message": "Event approved successfully"
+            }), 200
+        elif data.get('action') == 'reject':
+            event_id = data.get('eventId')
+            event = events.query.filter_by(eventid = event_id)
+            for ele in event:
+                db.session.delete(ele)
+            db.session.commit()
+            return jsonify({
+                "message": "Event rejected successfully"
+            }), 200
        

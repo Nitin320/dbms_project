@@ -10,8 +10,7 @@ const Lead = () => {
   const functionalities = [
     { id: 1, name: 'Create Event', description: 'Click here to create an event' },
     { id: 2, name: 'Delete Event', description: 'Click here to delete an event' },
-    { id: 3, name: 'Add Members', description: 'Click here to add a member' },
-    { id: 4, name: 'Delete Members', description: 'Click here to remove a member' },
+    { id: 4, name: 'Delete Members', description: 'Click here to remove a member' }, // Removed "Add Members"
   ];
 
   const [loading, setLoading] = useState(false);
@@ -23,13 +22,9 @@ const Lead = () => {
   const [venue, setVenue] = useState('');
   const [maxVolunteers, setMaxVolunteers] = useState('');
 
-
   const handleCreateEvent = async () => {
-    // Fetch club_id from local storage
-    const club_id = localStorage.getItem('club_id');
-
     const newEvent = {
-      club: localStorage.getItem('club'),  // Include club_id in the payload
+      club: localStorage.getItem('club'),
       eventName,
       startDate,
       endDate,
@@ -38,7 +33,7 @@ const Lead = () => {
       maxVolunteers,
     };
 
-    setLoading(true); // Start loading indicator
+    setLoading(true);
 
     try {
       const response = await fetch('http://localhost:5000/api/create_event', {
@@ -53,7 +48,6 @@ const Lead = () => {
 
       if (response.ok) {
         console.log('Event created successfully:', result.message);
-        // Clear form fields
         setEventName('');
         setStartDate('');
         setEndDate('');
@@ -76,9 +70,8 @@ const Lead = () => {
 
   const handleFunctionClick = (funcId) => {
     if (funcId === 1) {
-      setShowModal(true); // Open modal for creating an event
+      setShowModal(true);
     }
-    // Additional functionality handling can be implemented here
   };
 
   useEffect(() => {
@@ -87,7 +80,7 @@ const Lead = () => {
       setLoading(false);
     }, 3500);
 
-    return () => clearTimeout(timer); // Cleanup timeout on unmount
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -111,19 +104,32 @@ const Lead = () => {
           </div>
 
           {/* Main content with centralized functionality boxes */}
-          <div className="w-full max-w-6xl mt-16 p-8 flex justify-center z-20">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
-              {functionalities.map((func) => (
+          <div className="w-full max-w-6xl mt-16 p-8 flex flex-col items-center z-20">
+            {/* First row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full justify-center">
+              {functionalities.slice(0, 2).map((func) => (
                 <div
                   key={func.id}
                   className="relative group p-8 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg"
-                  onClick={() => handleFunctionClick(func.id)} 
+                  onClick={() => handleFunctionClick(func.id)}
                 >
                   <h3 className="text-2xl font-semibold mb-4">{func.name}</h3>
                   <p className="text-gray-400">{func.description}</p>
                   <div className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-30 transition duration-300 ease-in-out rounded-lg"></div>
                 </div>
               ))}
+            </div>
+
+            {/* Second row - Centralized */}
+            <div className="flex justify-center mt-8 w-full">
+              <div
+                className="relative group p-8 rounded-lg w-full bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg"
+                onClick={() => handleFunctionClick(4)} // Click handler for "Delete Members"
+              >
+                <h3 className="text-2xl font-semibold mb-4">{functionalities[2].name}</h3>
+                <p className="text-gray-400">{functionalities[2].description}</p>
+                <div className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-30 transition duration-300 ease-in-out rounded-lg"></div>
+              </div>
             </div>
           </div>
         </>
@@ -215,11 +221,12 @@ const Lead = () => {
           display: none;
         }
         .hide-scrollbar {
-          -ms-overflow-style: none; /* IE and Edge */
-          scrollbar-width: none; /* Firefox */
+          -ms-overflow-style: none;
+          scrollbar-width: none;
         }
       `}</style>
     </div>
   );
 };
+
 export default Lead;
