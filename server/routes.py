@@ -124,7 +124,7 @@ def register_routes(app, db):
             }), 401
 
         #ensure that email is of form <num><str><num>@mgits.ac.in
-        if not re.match(r'^[0-9]+[a-zA-Z]+[0-9]+@mgits.ac.in$', username):
+        '''if not re.match(r'^[0-9]+[a-zA-Z]+[0-9]+@mgits.ac.in$', username):
             return jsonify({
                 "message": "Invalid email address!",
                 "data": {
@@ -135,8 +135,8 @@ def register_routes(app, db):
                     "name": None
                 }
             }), 401
-        else:
-            uid = username.split('@')[0]
+        else:'''
+        uid = username.split('@')[0]
         
         #ensuring record with same email does not exist in user_credentials table already
         cred = user_credentials.query.filter_by(username = username)
