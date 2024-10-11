@@ -195,14 +195,14 @@ def register_routes(app, db):
         data = request.get_json()
         club = data.get('club')
         club_id = get_clubid_from_clubname(club)
-        event_data = events.query.filter_by(completed = 0, approved = 1)
+        event_data = events.query.filter_by(completed = 0)
         events_list = []
         for ele in event_data:
             events_list.append({
                 "event_id": ele.eventid,
                 "event_name": ele.eventname,
                 "event_date": ele.start_date,
-                "timr": ele.time,
+                "time": ele.time,
                 "venue": ele.venue,
                 "max_volunteers": ele.max_volunteers,
                 "current_volunteers": ele.current_volunteers
@@ -278,7 +278,7 @@ def register_routes(app, db):
             print(f"Received data: {data}")  # Log the incoming data
 
             # Extract event details from the request
-            club = data.get('club')  # Check if this is None or empty
+            club = data.get('club_id')  # Check if this is None or empty
             club_id = get_clubid_from_clubname(club)
             event_name = data.get('eventName')
             start_date = data.get('startDate')
@@ -423,76 +423,8 @@ def register_routes(app, db):
             return jsonify({
                 "message": "Event rejected successfully"
             }), 200
-       
-    @app.route('/api/delete_member', methods=['GET', 'POST'], endpoint = 'delete_member')
-    def delete_member():
-        data = request.get_json()
-        uid = data.get('memberId')
-        club = data.get('club')
-        club_id = get_clubid_from_clubname(club)
-        print(data)
 
-        members = user_details.query.filter_by(uid = uid, clubid = club_id)
-        if members:
-            for member in members:
-                db.session.delete(member)
-            db.session.commit()
-            return jsonify({
-                "message": "Member {} deleted successfully".format(uid)
-            }), 200
-        else:
-            return jsonify({
-                "message": "Member not found"
-            }), 404
-        
-    @app.route('/api/applyVolunteer', methods=['GET', 'POST'], endpoint = 'applyVolunteer')
-    def applyVolunteer():
-        data = request.get_json()
-        uid = data.get('user_id')  # Adjusted to match the frontend key
-        event_id = data.get('event_id')
-
-        # Fetch the event using the event_id
-        event = events.query.filter_by(eventid=event_id).first()
-        
-        if not event:
-            return jsonify({"message": "Event not found"}), 404
-
-        # Check if the event is already full
-        if event.current_volunteers >= event.max_volunteers:
-            return jsonify({"message": "Event is already full"}), 400
-
-        # Increment the current volunteers
-        event.current_volunteers += 1
-
-        # Create an attendance record
-        attendance_record = attendance(uid=uid, eventid=event_id, role="Volunteer", attended=False)
-        db.session.add(attendance_record)
-
-        # Commit the changes to the database
-        db.session.commit()
-        return jsonify({"message": "Volunteer applied successfully"}), 200
-    
-    @app.route('/api/applyParticipant', methods=['GET', 'POST'], endpoint = 'applyParticipant')
-    def applyParticipant():
-        data = request.get_json()
-        uid = data.get('user_id')  # Adjusted to match the frontend key
-        event_id = data.get('event_id')
-
-        # Fetch the event using the event_id
-        event = events.query.filter_by(eventid=event_id).first()
-        
-        if not event:
-            return jsonify({"message": "Event not found"}), 404
-
-        # Create an attendance record
-        attendance_record = attendance(uid=uid, eventid=event_id, role="Participant", attended=False)
-        db.session.add(attendance_record)
-
-        # Commit the changes to the database
-        db.session.commit()
-        return jsonify({"message": "Participant applied successfully"}), 200
-    
-    @app.route('/api/deleteEvent', methods=["GET", 'POST'], endpoint = 'deleteEvent')
+    @app.route('/api/deleteEvent', methods=['POST'])
     def delete_event():
         data = request.get_json()
         event_id = data.get('eventId')
@@ -510,4 +442,5 @@ def register_routes(app, db):
         db.session.delete(event)
         db.session.commit()
 
-        return jsonify({"message": "Event deleted successfully."}), 200    
+        return jsonify({"message": "Event deleted successfully."}), 200
+

@@ -152,7 +152,26 @@ const Lead = () => {
       fetchEvents(); // Fetch events again after creation
     }
   };
-  
+
+  const handleDeleteEvent = async (eventId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/delete_event/`, {
+        method: 'POST',
+      });
+
+      if (response.ok) {
+        alert('Event deleted successfully!');
+        fetchEvents(); // Refresh the events list after deletion
+      } else {
+        alert('Failed to delete the event');
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+      alert('An error occurred while deleting the event.');
+    } finally {
+      setShowDeleteModal(false); // Close delete modal
+    }
+  };
 
   const handleDeleteMember = async (memberId) => {
     const data ={ memberId, 
@@ -342,10 +361,10 @@ const Lead = () => {
             {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
             <ul className="space-y-4">
               {events.map((event) => (
-                <li key={event.event_id} className="flex justify-between items-center p-4 bg-gray-700 rounded-lg">
+                <li key={event.id} className="flex justify-between items-center p-4 bg-gray-700 rounded-lg">
                   <span>{event.event_name}</span>
                   <button
-                    onClick={() => deleteEvent(event.event_id)}
+                    onClick={() => handleDeleteEvent(event.id)}
                     className="py-1 px-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-200"
                   >
                     Delete

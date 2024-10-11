@@ -53,38 +53,6 @@ const Lead = () => {
     }
   };
 
-  const deleteEvent = async (eventId) => {
-    console.log("Deleting event with ID:", eventId); 
-
-    //if (!eventId) {
-    //  alert('Event ID is required');
-    //  return; 
-    //}
-
-    try {
-      const response = await fetch('http://127.0.0.1:5000/api/deleteEvent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ eventId })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data.message);  
-        fetchEvents(); 
-      } else {
-        const errorData = await response.json();
-        console.error('Error:', errorData.message); 
-        alert(`Error: ${errorData.message}`); 
-      }
-    } catch (error) {
-      console.error('Fetch error:', error);
-      alert('An error occurred while deleting the event. Please try again.'); 
-    }
-  };
-  
   // Fetch members function
   const fetchMembers = async () => {
     try {
@@ -152,7 +120,26 @@ const Lead = () => {
       fetchEvents(); // Fetch events again after creation
     }
   };
-  
+
+  const handleDeleteEvent = async (eventId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/delete_event/`, {
+        method: 'POST',
+      });
+
+      if (response.ok) {
+        alert('Event deleted successfully!');
+        fetchEvents(); // Refresh the events list after deletion
+      } else {
+        alert('Failed to delete the event');
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+      alert('An error occurred while deleting the event.');
+    } finally {
+      setShowDeleteModal(false); // Close delete modal
+    }
+  };
 
   const handleDeleteMember = async (memberId) => {
     const data ={ memberId, 
@@ -342,10 +329,10 @@ const Lead = () => {
             {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
             <ul className="space-y-4">
               {events.map((event) => (
-                <li key={event.event_id} className="flex justify-between items-center p-4 bg-gray-700 rounded-lg">
+                <li key={event.id} className="flex justify-between items-center p-4 bg-gray-700 rounded-lg">
                   <span>{event.event_name}</span>
                   <button
-                    onClick={() => deleteEvent(event.event_id)}
+                    onClick={() => handleDeleteEvent(event.id)}
                     className="py-1 px-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-200"
                   >
                     Delete

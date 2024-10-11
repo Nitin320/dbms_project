@@ -470,44 +470,5 @@ def register_routes(app, db):
 
         # Commit the changes to the database
         db.session.commit()
+
         return jsonify({"message": "Volunteer applied successfully"}), 200
-    
-    @app.route('/api/applyParticipant', methods=['GET', 'POST'], endpoint = 'applyParticipant')
-    def applyParticipant():
-        data = request.get_json()
-        uid = data.get('user_id')  # Adjusted to match the frontend key
-        event_id = data.get('event_id')
-
-        # Fetch the event using the event_id
-        event = events.query.filter_by(eventid=event_id).first()
-        
-        if not event:
-            return jsonify({"message": "Event not found"}), 404
-
-        # Create an attendance record
-        attendance_record = attendance(uid=uid, eventid=event_id, role="Participant", attended=False)
-        db.session.add(attendance_record)
-
-        # Commit the changes to the database
-        db.session.commit()
-        return jsonify({"message": "Participant applied successfully"}), 200
-    
-    @app.route('/api/deleteEvent', methods=["GET", 'POST'], endpoint = 'deleteEvent')
-    def delete_event():
-        data = request.get_json()
-        event_id = data.get('eventId')
-        print(event_id)
-        print(data)
-
-        if not event_id:
-            return jsonify({"message": "Event ID is required."}), 400
-
-        event = events.query.filter_by(eventid=event_id).first()
-
-        if not event:
-            return jsonify({"message": "Event not found."}), 404
-
-        db.session.delete(event)
-        db.session.commit()
-
-        return jsonify({"message": "Event deleted successfully."}), 200    
