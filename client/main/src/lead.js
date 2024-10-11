@@ -10,18 +10,20 @@ const Lead = () => {
   const functionalities = [
     { id: 1, name: 'Create Event', description: 'Click here to create an event' },
     { id: 2, name: 'Delete Event', description: 'Click here to delete an event' },
-    { id: 3, name: 'Add Members', description: 'Click here to add a member' },
-    { id: 4, name: 'Delete Members', description: 'Click here to remove a member' },
+    { id: 3, name: 'Delete Members', description: 'Click here to remove a member' },
   ];
 
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [eventName, setEventName] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [eventTime, setEventTime] = useState('');
   const [venue, setVenue] = useState('');
   const [maxVolunteers, setMaxVolunteers] = useState('');
+  const [events, setEvents] = useState([]);
+  const [error, setError] = useState(null);
 
 
   const handleCreateEvent = async () => {
@@ -29,7 +31,11 @@ const Lead = () => {
     const club_id = localStorage.getItem('club_id');
 
     const newEvent = {
+<<<<<<< HEAD
       club: localStorage.getItem('club'),  // Include club_id in the payload
+=======
+      club_id,
+>>>>>>> 798a4469435161c21548b8bd5e0902ba6ba57175
       eventName,
       startDate,
       endDate,
@@ -38,8 +44,7 @@ const Lead = () => {
       maxVolunteers,
     };
 
-    setLoading(true); // Start loading indicator
-
+    setLoading(true);
     try {
       const response = await fetch('http://localhost:5000/api/create_event', {
         method: 'POST',
@@ -52,8 +57,7 @@ const Lead = () => {
       const result = await response.json();
 
       if (response.ok) {
-        console.log('Event created successfully:', result.message);
-        // Clear form fields
+        alert('Event created successfully!');
         setEventName('');
         setStartDate('');
         setEndDate('');
@@ -69,16 +73,57 @@ const Lead = () => {
       console.error('An error occurred:', error);
       alert('An error occurred while creating the event. Please try again.');
     } finally {
-      setLoading(false); // Stop loading indicator
-      setShowModal(false); // Close the modal after submission
+      setLoading(false);
+      setShowModal(false);
     }
   };
 
   const handleFunctionClick = (funcId) => {
     if (funcId === 1) {
-      setShowModal(true); // Open modal for creating an event
+      setShowModal(true);
+    } else if (funcId === 2) {
+      fetchEvents();
+      setShowDeleteModal(true);
     }
-    // Additional functionality handling can be implemented here
+  };
+
+  const fetchEvents = async () => {
+    try {
+      const role = localStorage.getItem('userRole');
+      const club = localStorage.getItem('club');
+      const response = await fetch('http://127.0.0.1:5000/api/getEvents', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ role, club }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch events');
+      }
+      const data = await response.json();
+      setEvents(data.data);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleCancelEvent = async (eventId) => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/api/deleteEvent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ eventId }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to cancel event');
+      }
+      setEvents(events.filter(event => event.id !== eventId));
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   useEffect(() => {
@@ -86,8 +131,7 @@ const Lead = () => {
     const timer = setTimeout(() => {
       setLoading(false);
     }, 3500);
-
-    return () => clearTimeout(timer); // Cleanup timeout on unmount
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -113,7 +157,7 @@ const Lead = () => {
           {/* Main content with centralized functionality boxes */}
           <div className="w-full max-w-6xl mt-16 p-8 flex justify-center z-20">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
-              {functionalities.map((func) => (
+              {functionalities.slice(0, 2).map((func) => (
                 <div
                   key={func.id}
                   className="relative group p-8 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg"
@@ -124,6 +168,16 @@ const Lead = () => {
                   <div className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-30 transition duration-300 ease-in-out rounded-lg"></div>
                 </div>
               ))}
+              {/* Delete Members block centralized */}
+              <div
+                key={functionalities[2].id}
+                className="relative group col-span-2 p-8 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg"
+                onClick={() => handleFunctionClick(functionalities[2].id)} 
+              >
+                <h3 className="text-2xl font-semibold mb-4 text-center">{functionalities[2].name}</h3>
+                <p className="text-gray-400 text-center">{functionalities[2].description}</p>
+                <div className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-30 transition duration-300 ease-in-out rounded-lg"></div>
+              </div>
             </div>
           </div>
         </>
@@ -194,13 +248,13 @@ const Lead = () => {
             <div className="flex justify-center space-x-6 mt-8">
               <button
                 className="py-2 px-4 bg-green-500 rounded-lg hover:bg-green-600 transition duration-200"
-                onClick={handleCreateEvent} // Handle form submission
+                onClick={handleCreateEvent}
               >
                 Create
               </button>
               <button
                 className="py-2 px-4 bg-red-500 rounded-lg hover:bg-red-600 transition duration-200"
-                onClick={() => setShowModal(false)} // Handle modal close
+                onClick={() => setShowModal(false)}
               >
                 Cancel
               </button>
@@ -209,7 +263,34 @@ const Lead = () => {
         </div>
       )}
 
-      {/* CSS for hiding scrollbar */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-11/12 max-w-lg max-h-[90vh] overflow-y-auto hide-scrollbar">
+            <h2 className="text-3xl font-bold mb-6">Delete Event</h2>
+            {error && <p className="text-red-500 mb-4">{error}</p>}
+            <div className="space-y-4">
+              {events.length > 0 ? (
+                events.map((event) => (
+                  <div key={event.id} className="flex justify-between items-center p-4 bg-gray-700 rounded-lg">
+                    <span className="text-lg">{event.event_name}</span>
+                    <button className="py-1 px-3 bg-red-500 rounded-lg hover:bg-red-600 transition duration-200" onClick={() => handleCancelEvent(event.id)}>
+                      Cancel
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <p>No events scheduled.</p>
+              )}
+            </div>
+            <div className="flex justify-center space-x-6 mt-8">
+              <button className="py-2 px-4 bg-red-500 rounded-lg hover:bg-red-600 transition duration-200" onClick={() => setShowDeleteModal(false)}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <style jsx>{`
         .hide-scrollbar::-webkit-scrollbar {
           display: none;
@@ -221,6 +302,6 @@ const Lead = () => {
       `}</style>
     </div>
   );
-};
+}
 
 export default Lead;
