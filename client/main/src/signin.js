@@ -26,10 +26,14 @@ const SignIn = () => {
     e.preventDefault();
     alert(`Email: ${email}, Password: ${password}, Club: ${club}`);
 
+    // Fetch club ID based on the selected club
+    const clubId = await getClubId(club);
+
     const userData = {
       email,
       password,
       club,
+      club_id: clubId, // Add club_id to userData
     };
 
     try {
@@ -80,6 +84,16 @@ const SignIn = () => {
       alert('Sign-in failed. Please try again.'); // Optional: Update based on your needs
     }
   };
+
+  const getClubId = async (clubName) => {
+    // You might want to store club names and IDs in an array
+    const clubs = {
+      "GDSC": 1,
+      "Media Club": 2,
+      "Coding Club": 3,
+    };
+    return clubs[clubName] || null; // Return the corresponding club ID
+};
 
   return (
     <div className="relative min-h-screen text-white">
