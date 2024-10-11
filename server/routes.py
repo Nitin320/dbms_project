@@ -312,6 +312,7 @@ def register_routes(app, db):
         members_list = []
         for ele in members_data:
             members_list.append({
+                "uid": ele.uid,
                 "name": ele.name,
                 "role": ele.role
             })
