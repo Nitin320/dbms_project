@@ -195,7 +195,7 @@ def register_routes(app, db):
         data = request.get_json()
         club = data.get('club')
         club_id = get_clubid_from_clubname(club)
-        event_data = events.query.filter_by(completed = 0, approved = 1)
+        event_data = events.query.filter_by(completed = 0)
         events_list = []
         for ele in event_data:
             events_list.append({
@@ -278,7 +278,7 @@ def register_routes(app, db):
             print(f"Received data: {data}")  # Log the incoming data
 
             # Extract event details from the request
-            club = data.get('club')  # Check if this is None or empty
+            club = data.get('club_id')  # Check if this is None or empty
             club_id = get_clubid_from_clubname(club)
             event_name = data.get('eventName')
             start_date = data.get('startDate')
