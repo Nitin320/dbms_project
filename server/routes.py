@@ -308,7 +308,7 @@ def register_routes(app, db):
         data = request.get_json()
         club = data.get('club')
         club_id = get_clubid_from_clubname(club)
-        members_data = user_details.query.filter_by(clubid = club_id)
+        members_data = user_details.query.filter_by(clubid = club_id, role = "Member")
         members_list = []
         for ele in members_data:
             members_list.append({
@@ -344,3 +344,43 @@ def register_routes(app, db):
                 "pfp_name": pfp_name
             }
         }), 200
+    
+    @app.route('/api/assignLead', methods=['GET', 'POST'], endpoint = 'assignLead')
+    def assignLead():
+        data = request.get_json()
+        uid = data.get('memberId')
+        club = data.get('club')
+        club_id = get_clubid_from_clubname(club)
+        #fetch current lead
+        lead = user_details.query.filter_by(clubid = club_id, role = "Lead")
+        for ele in lead:
+            ele.role = "Member"
+        #assign new lead
+        user = user_details.query.filter_by(uid = uid, clubid = club_id)
+        for ele in user:
+            ele.role = "Lead"
+        db.session.commit()
+        return jsonify({
+            "message": "Lead assigned successfully"
+        }), 200
+        
+    @app.route('/api/assignColead', methods=['GET', 'POST'], endpoint = 'assignColead')
+    def assignColead():
+        data = request.get_json()
+        uid = data.get('memberId')
+        club = data.get('club')
+        club_id = get_clubid_from_clubname(club)
+        #fetch current lead
+        lead = user_details.query.filter_by(clubid = club_id, role = "Co-Lead")
+        for ele in lead:
+            ele.role = "Member"
+        #assign new lead
+        user = user_details.query.filter_by(uid = uid, clubid = club_id)
+        for ele in user:
+            ele.role = "Co-Lead"
+        db.session.commit()
+        return jsonify({
+            "message": "Co-Lead assigned successfully"
+        }), 200
+
+       
