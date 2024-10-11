@@ -2,6 +2,7 @@ from flask import render_template, request, jsonify
 import re
 import base64
 from models import user_credentials, user_details, attendance, clubs, events
+import random
 
 def get_clubid_from_clubname(club):
     club_details = clubs.query.all()
@@ -122,7 +123,7 @@ def register_routes(app, db):
             }), 401
 
         #ensure that email is of form <num><str><num>@mgits.ac.in
-        if not re.match(r'^[0-9]+[a-zA-Z]+[0-9]+@mgits.ac.in$', username):
+        '''if not re.match(r'^[0-9]+[a-zA-Z]+[0-9]+@mgits.ac.in$', username):
             return jsonify({
                 "message": "Invalid email address!",
                 "data": {
@@ -134,7 +135,14 @@ def register_routes(app, db):
                 }
             }), 401
         else:
-            uid = username.split('@')[0]
+            uid = username.split('@')[0]'''
+        uid = str(random.randint(100000, 999999))
+        #check if user with same uid already exists
+        cred = user_credentials.query.filter_by(uid = uid)
+        while cred:
+            uid = str(random.randint(100000, 999999))
+            cred = user_credentials.query.filter_by(uid = uid)
+        
         
         #ensuring record with same email does not exist in user_credentials table already
         cred = user_credentials.query.filter_by(username = username)
@@ -294,3 +302,20 @@ def register_routes(app, db):
             return jsonify({
                 "message": "An error occurred while creating the event."
             }), 500
+
+    @app.route('/api/getMembers', methods=['GET', 'POST'])
+    def getMembers():
+        data = request.get_json()
+        club = data.get('club')
+        club_id = get_clubid_from_clubname(club)
+        members_data = user_details.query.filter_by(clubid = club_id)
+        members_list = []
+        for ele in members_data:
+            members_list.append({
+                "name": ele.name,
+                "role": ele.role
+            })
+        return jsonify({
+            "message": "Members fetched successfully",
+            "data": members_list
+        }), 200
