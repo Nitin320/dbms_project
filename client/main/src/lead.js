@@ -9,8 +9,7 @@ const Lead = () => {
   const functionalities = [
     { id: 1, name: 'Create Event', description: 'Click here to create an event' },
     { id: 2, name: 'Delete Event', description: 'Click here to delete an event' },
-    { id: 3, name: 'Add Members', description: 'Click here to add a member' },
-    { id: 4, name: 'Delete Members', description: 'Click here to remove a member' },
+    { id: 3, name: 'Delete Members', description: 'Click here to remove a member' },
   ];
 
   const [loading, setLoading] = useState(false);
@@ -152,7 +151,7 @@ const Lead = () => {
           {/* Main content with centralized functionality boxes */}
           <div className="w-full max-w-6xl mt-16 p-8 flex justify-center z-20">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
-              {functionalities.map((func) => (
+              {functionalities.slice(0, 2).map((func) => (
                 <div
                   key={func.id}
                   className="relative group p-8 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg"
@@ -163,6 +162,16 @@ const Lead = () => {
                   <div className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-30 transition duration-300 ease-in-out rounded-lg"></div>
                 </div>
               ))}
+              {/* Delete Members block centralized */}
+              <div
+                key={functionalities[2].id}
+                className="relative group col-span-2 p-8 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg"
+                onClick={() => handleFunctionClick(functionalities[2].id)} 
+              >
+                <h3 className="text-2xl font-semibold mb-4 text-center">{functionalities[2].name}</h3>
+                <p className="text-gray-400 text-center">{functionalities[2].description}</p>
+                <div className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-30 transition duration-300 ease-in-out rounded-lg"></div>
+              </div>
             </div>
           </div>
         </>
