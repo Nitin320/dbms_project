@@ -2,7 +2,6 @@ from flask import render_template, request, jsonify
 import re
 import base64
 from models import user_credentials, user_details, attendance, clubs, events
-import random
 
 def get_clubid_from_clubname(club):
     club_details = clubs.query.all()
@@ -34,6 +33,7 @@ def register_routes(app, db):
         username = data.get('email')
         password = data.get('password')
         club = data.get('club')
+        club_id = data.get('club_id')
 
         # Here, you can process the sign-in logic (e.g., verify credentials)
 
@@ -73,6 +73,7 @@ def register_routes(app, db):
                     "uid" : uid,
                     "email": username,
                     "club": club,
+                    "clubid":club_id,
                     "role": role, 
                     "name": name, 
                     "pfp": pfp, 
@@ -123,7 +124,7 @@ def register_routes(app, db):
             }), 401
 
         #ensure that email is of form <num><str><num>@mgits.ac.in
-        '''if not re.match(r'^[0-9]+[a-zA-Z]+[0-9]+@mgits.ac.in$', username):
+        if not re.match(r'^[0-9]+[a-zA-Z]+[0-9]+@mgits.ac.in$', username):
             return jsonify({
                 "message": "Invalid email address!",
                 "data": {
@@ -135,14 +136,7 @@ def register_routes(app, db):
                 }
             }), 401
         else:
-            uid = username.split('@')[0]'''
-        uid = str(random.randint(100000, 999999))
-        #check if user with same uid already exists
-        cred = user_credentials.query.filter_by(uid = uid)
-        while list(cred)!= []:
-            uid = str(random.randint(100000, 999999))
-            cred = user_credentials.query.filter_by(uid = uid)
-        
+            uid = username.split('@')[0]
         
         #ensuring record with same email does not exist in user_credentials table already
         cred = user_credentials.query.filter_by(username = username)
@@ -198,6 +192,7 @@ def register_routes(app, db):
         
     @app.route('/api/getEvents', methods=['GET', 'POST'], endpoint = 'getEvent')
     def getEvents():
+        clibid = 99
         data = request.get_json()
         #role = data.get('role')
         club = data.get('club')
@@ -258,9 +253,11 @@ def register_routes(app, db):
     def create_event():
         try:
             data = request.get_json()
-            print(f"Received data: {data}")  # Log the incoming data. 
+            print(f"Received data: {data}")  # Log the incoming data
 
             # Extract event details from the request
+            club = data.get('club')  # Check if this is None or empty
+            club_id = get_clubid_from_clubname(club)
             event_name = data.get('eventName')
             start_date = data.get('startDate')
             end_date = data.get('endDate')
@@ -269,15 +266,15 @@ def register_routes(app, db):
             max_volunteers = data.get('maxVolunteers')
 
             # Ensure required fields are provided
-            if not event_name or not start_date or not venue:
+            if not event_name or not start_date or not venue or club_id is None:
                 print(f"Missing required fields: {data}")
                 return jsonify({
-                    "message": "Event name, start date, and venue are required."
+                    "message": "Event name, start date, venue, and club ID are required."
                 }), 400
 
             # Create a new event record
             new_event = events(
-                clubid = 99,   #you can get the club name from the frontend. write a function to convert that to club id and use that value here
+                clubid=club_id,
                 eventname=event_name,
                 start_date=start_date,
                 end_date=end_date,
@@ -285,7 +282,7 @@ def register_routes(app, db):
                 venue=venue,
                 max_volunteers=max_volunteers,
                 current_volunteers=0,  # Initially 0
-                approved=1,  # Assuming the lead's event is approved by default. make this 0. event should be approved by faculty right?
+                approved=1,  # Assuming the lead's event is approved by default
                 completed=0  # Event is not completed yet
             )
 
