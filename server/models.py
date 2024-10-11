@@ -72,9 +72,9 @@ class attendance(db.Model):
 
     #defining the columns of the table
 
-    uid = db.Column(db.Text)
-    eventid = db.Column(db.Integer)
-    role = db.Column(db.Text, nullable=False)
+    uid = db.Column(db.Text, nullable=False)
+    eventid = db.Column(db.Integer, nullable=False)
+    role = db.Column(db.Text, nullable=False)  #Volunteer, Participant
     attended = db.Column(db.Boolean, nullable=False, default=False)
 
     __table_args__ = (
@@ -82,5 +82,5 @@ class attendance(db.Model):
     )
 
     def __repr__(self):
-        return "{}\t{}\t{}".format(self.uid, self.eventid, self.attended)
+        return "{}\t{}\t{}\t{}".format(self.uid, self.eventid, self.role, self.attended)
     
