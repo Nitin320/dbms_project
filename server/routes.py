@@ -139,7 +139,7 @@ def register_routes(app, db):
         uid = str(random.randint(100000, 999999))
         #check if user with same uid already exists
         cred = user_credentials.query.filter_by(uid = uid)
-        while cred:
+        while list(cred)!= []:
             uid = str(random.randint(100000, 999999))
             cred = user_credentials.query.filter_by(uid = uid)
         
@@ -303,7 +303,7 @@ def register_routes(app, db):
                 "message": "An error occurred while creating the event."
             }), 500
 
-    @app.route('/api/getMembers', methods=['GET', 'POST'])
+    @app.route('/api/getMembers', methods=['GET', 'POST'], endpoint = 'getMembers')
     def getMembers():
         data = request.get_json()
         club = data.get('club')
@@ -319,4 +319,28 @@ def register_routes(app, db):
         return jsonify({
             "message": "Members fetched successfully",
             "data": members_list
+        }), 200
+    
+    @app.route('/api/getPfp', methods=['GET', 'POST'], endpoint = 'getPfp')
+    def getPfp():
+        data = request.get_json()
+        uid = data.get('uid')
+        user = user_details.query.filter_by(uid = uid)
+        pfp = None
+        pfp_name = None
+        for ele in user:
+            pfp = ele.pfp
+            pfp_name = ele.pfp_name
+            if pfp:
+                pfp = base64.b64encode(pfp).decode('utf-8')
+                ext = pfp_name.split('.')[1]
+                if ext == 'jpg':
+                    ext = 'jpeg'
+                pfp = 'data:image/{};base64,'.format(ext) + pfp
+        return jsonify({
+            "message": "Profile picture fetched successfully",
+            "data": {
+                "pfp": pfp,
+                "pfp_name": pfp_name
+            }
         }), 200
