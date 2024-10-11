@@ -98,15 +98,57 @@ const Faculty = () => {
   };
 
   // Function to handle assigning a lead to a member
-  const handleAssignLead = (memberId) => {
+  const handleAssignLead = async (memberId) => {
     console.log(`Lead assigned to member ${memberId}`);
     // Add your logic for assigning the lead here
+    try {
+      const club = localStorage.getItem('club');
+      const response = await fetch('http://127.0.0.1:5000/api/assignLead', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ memberId, club }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to assign lead');
+      }
+
+      const data = await response.json();
+      console.log(data.message);
+      alert('Lead assigned successfully!'); // Notify the user
+    } catch (error) {
+      console.error('Error assigning lead:', error);
+      alert('Error assigning lead. Please try again.');
+    }
   };
 
   // Function to handle assigning a co-lead to a member
-  const handleAssignCoLead = (memberId) => {
+  const handleAssignCoLead = async (memberId) => {
     console.log(`Co-lead assigned to member ${memberId}`);
     // Add your logic for assigning the co-lead here
+    try {
+      const club = localStorage.getItem('club');
+      const response = await fetch('http://127.0.0.1:5000/api/assignColead', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ memberId, club }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to assign colead');
+      }
+
+      const data = await response.json();
+      console.log(data.message);
+      alert('coLead assigned successfully!'); // Notify the user
+    } catch (error) {
+      console.error('Error assigning CoLead:', error);
+      alert('Error assigning CoLead. Please try again.');
+    }
   };
 
   return (
@@ -224,7 +266,7 @@ const Faculty = () => {
                       </div>
                       <button
                         className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
-                        onClick={() => handleAssignLead(member.id)}
+                        onClick={() => handleAssignLead(member.uid)}
                       >
                         Assign Lead
                       </button>
@@ -264,7 +306,7 @@ const Faculty = () => {
                       </div>
                       <button
                         className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
-                        onClick={() => handleAssignCoLead(member.id)}
+                        onClick={() => handleAssignCoLead(member.uid)}
                       >
                         Assign Co-Lead
                       </button>

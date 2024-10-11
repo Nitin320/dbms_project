@@ -299,3 +299,85 @@ def register_routes(app, db):
             return jsonify({
                 "message": "An error occurred while creating the event."
             }), 500
+
+    @app.route('/api/getMembers', methods=['GET', 'POST'], endpoint = 'getMembers')
+    def getMembers():
+        data = request.get_json()
+        club = data.get('club')
+        club_id = get_clubid_from_clubname(club)
+        members_data = user_details.query.filter_by(clubid = club_id, role = "Member")
+        members_list = []
+        for ele in members_data:
+            members_list.append({
+                "uid": ele.uid,
+                "name": ele.name,
+                "role": ele.role
+            })
+        return jsonify({
+            "message": "Members fetched successfully",
+            "data": members_list
+        }), 200
+    
+    @app.route('/api/getPfp', methods=['GET', 'POST'], endpoint = 'getPfp')
+    def getPfp():
+        data = request.get_json()
+        uid = data.get('uid')
+        user = user_details.query.filter_by(uid = uid)
+        pfp = None
+        pfp_name = None
+        for ele in user:
+            pfp = ele.pfp
+            pfp_name = ele.pfp_name
+            if pfp:
+                pfp = base64.b64encode(pfp).decode('utf-8')
+                ext = pfp_name.split('.')[1]
+                if ext == 'jpg':
+                    ext = 'jpeg'
+                pfp = 'data:image/{};base64,'.format(ext) + pfp
+        return jsonify({
+            "message": "Profile picture fetched successfully",
+            "data": {
+                "pfp": pfp,
+                "pfp_name": pfp_name
+            }
+        }), 200
+    
+    @app.route('/api/assignLead', methods=['GET', 'POST'], endpoint = 'assignLead')
+    def assignLead():
+        data = request.get_json()
+        uid = data.get('memberId')
+        club = data.get('club')
+        club_id = get_clubid_from_clubname(club)
+        #fetch current lead
+        lead = user_details.query.filter_by(clubid = club_id, role = "Lead")
+        for ele in lead:
+            ele.role = "Member"
+        #assign new lead
+        user = user_details.query.filter_by(uid = uid, clubid = club_id)
+        for ele in user:
+            ele.role = "Lead"
+        db.session.commit()
+        return jsonify({
+            "message": "Lead assigned successfully"
+        }), 200
+        
+    @app.route('/api/assignColead', methods=['GET', 'POST'], endpoint = 'assignColead')
+    def assignColead():
+        data = request.get_json()
+        uid = data.get('memberId')
+        club = data.get('club')
+        club_id = get_clubid_from_clubname(club)
+        #fetch current lead
+        lead = user_details.query.filter_by(clubid = club_id, role = "Co-Lead")
+        for ele in lead:
+            ele.role = "Member"
+        #assign new lead
+        user = user_details.query.filter_by(uid = uid, clubid = club_id)
+        for ele in user:
+            ele.role = "Co-Lead"
+        db.session.commit()
+        return jsonify({
+            "message": "Co-Lead assigned successfully"
+        }), 200
+
+       
