@@ -222,5 +222,4 @@ const Lead = () => {
     </div>
   );
 };
-
 export default Lead;
