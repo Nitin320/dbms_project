@@ -19,6 +19,7 @@ const SignIn = () => {
     setTimeout(() => {
       setLoading(false);
     }, 2600);
+    localStorage.setItem('userRole', '');
   }, []);
 
   // Handle form submission
