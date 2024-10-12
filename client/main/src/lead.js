@@ -27,6 +27,8 @@ const Lead = () => {
   const [venue, setVenue] = useState('');
   const [maxVolunteers, setMaxVolunteers] = useState('');
 
+  const [authenticate, setAuthenticate] = useState(false)
+
   // Fetch events function
   const fetchEvents = async () => {
     try {
@@ -197,7 +199,9 @@ const Lead = () => {
     const timer = setTimeout(() => {
       setLoading(false);
     }, 3500);
-
+    if(localStorage.getItem('userRole') == "Lead"){
+      setAuthenticate(true)
+    }
     return () => clearTimeout(timer);
   }, []);
 
@@ -207,191 +211,200 @@ const Lead = () => {
         <GradientBackground />
       </div>
 
-      {loading ? (
-        <div className="absolute inset-0 flex justify-center items-center z-50">
-          <div className="relative flex items-center justify-center p-6 rounded-full z-50">
-            <Lottie className="h-64 w-64" animationData={animationData} />
-          </div>
-        </div>
-      ) : (
+      {authenticate ? (
         <>
-          <div className="w-full py-4 px-8 flex justify-end bg-gray-800 z-20">
-            <a href='/profile'>
-              <FaUserCircle className="text-3xl text-gray-300 hover:text-white transition duration-200 ease-in-out cursor-pointer" />
-            </a>
+        {loading ? (
+          <div className="absolute inset-0 flex justify-center items-center z-50">
+            <div className="relative flex items-center justify-center p-6 rounded-full z-50">
+              <Lottie className="h-64 w-64" animationData={animationData} />
+            </div>
           </div>
+        ) : (
+          <>
+            <div className="w-full py-4 px-8 flex justify-end bg-gray-800 z-20">
+              <a href='/profile'>
+                <FaUserCircle className="text-3xl text-gray-300 hover:text-white transition duration-200 ease-in-out cursor-pointer" />
+              </a>
+            </div>
 
-          {/* Main content with centralized functionality boxes */}
-          <div className="w-full max-w-6xl mt-16 p-8 flex flex-col items-center z-20">
-            {/* First row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full justify-center">
-              {functionalities.slice(0, 2).map((func) => (
+            {/* Main content with centralized functionality boxes */}
+            <div className="w-full max-w-6xl mt-16 p-8 flex flex-col items-center z-20">
+              {/* First row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full justify-center">
+                {functionalities.slice(0, 2).map((func) => (
+                  <div
+                    key={func.id}
+                    className="relative group p-8 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg"
+                    onClick={() => handleFunctionClick(func.id)}
+                  >
+                    <h3 className="text-2xl font-semibold mb-4">{func.name}</h3>
+                    <p className="text-gray-400">{func.description}</p>
+                    <div className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-30 transition duration-300 ease-in-out rounded-lg"></div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Second row - Centralized */}
+              <div className="flex justify-center mt-8 w-full">
                 <div
-                  key={func.id}
-                  className="relative group p-8 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg"
-                  onClick={() => handleFunctionClick(func.id)}
+                  className="relative group p-8 rounded-lg w-full bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg"
+                  onClick={() => handleFunctionClick(4)} // Click handler for "Delete Members"
                 >
-                  <h3 className="text-2xl font-semibold mb-4">{func.name}</h3>
-                  <p className="text-gray-400">{func.description}</p>
+                  <h3 className="text-2xl font-semibold mb-4">{functionalities[2].name}</h3>
+                  <p className="text-gray-400">{functionalities[2].description}</p>
                   <div className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-30 transition duration-300 ease-in-out rounded-lg"></div>
                 </div>
-              ))}
-            </div>
-
-            {/* Second row - Centralized */}
-            <div className="flex justify-center mt-8 w-full">
-              <div
-                className="relative group p-8 rounded-lg w-full bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg"
-                onClick={() => handleFunctionClick(4)} // Click handler for "Delete Members"
-              >
-                <h3 className="text-2xl font-semibold mb-4">{functionalities[2].name}</h3>
-                <p className="text-gray-400">{functionalities[2].description}</p>
-                <div className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-30 transition duration-300 ease-in-out rounded-lg"></div>
               </div>
             </div>
-          </div>
-        </>
-      )}
+          </>
+        )}
 
-      {/* Modal for Creating Event */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-11/12 max-w-lg max-h-[90vh] overflow-y-auto hide-scrollbar">
-            <h2 className="text-3xl font-bold mb-6">Create Event</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-lg font-semibold mb-1">Event Name</label>
-                <input
-                  type="text"
-                  value={eventName}
-                  onChange={(e) => setEventName(e.target.value)}
-                  className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none"
-                />
+        {/* Modal for Creating Event */}
+        {showModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+            <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-11/12 max-w-lg max-h-[90vh] overflow-y-auto hide-scrollbar">
+              <h2 className="text-3xl font-bold mb-6">Create Event</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-lg font-semibold mb-1">Event Name</label>
+                  <input
+                    type="text"
+                    value={eventName}
+                    onChange={(e) => setEventName(e.target.value)}
+                    className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-lg font-semibold mb-1">Start Date</label>
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-lg font-semibold mb-1">End Date</label>
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-lg font-semibold mb-1">Start Time</label>
+                  <input
+                    type="time"
+                    value={eventTime}
+                    onChange={(e) => setEventTime(e.target.value)}
+                    className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-lg font-semibold mb-1">Venue</label>
+                  <input
+                    type="text"
+                    value={venue}
+                    onChange={(e) => setVenue(e.target.value)}
+                    className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-lg font-semibold mb-1">Max Volunteers</label>
+                  <input
+                    type="number"
+                    value={maxVolunteers}
+                    onChange={(e) => setMaxVolunteers(e.target.value)}
+                    className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none"
+                  />
+                </div>
               </div>
-              <div>
-                <label className="block text-lg font-semibold mb-1">Start Date</label>
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-lg font-semibold mb-1">End Date</label>
-                <input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-lg font-semibold mb-1">Start Time</label>
-                <input
-                  type="time"
-                  value={eventTime}
-                  onChange={(e) => setEventTime(e.target.value)}
-                  className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-lg font-semibold mb-1">Venue</label>
-                <input
-                  type="text"
-                  value={venue}
-                  onChange={(e) => setVenue(e.target.value)}
-                  className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-lg font-semibold mb-1">Max Volunteers</label>
-                <input
-                  type="number"
-                  value={maxVolunteers}
-                  onChange={(e) => setMaxVolunteers(e.target.value)}
-                  className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none"
-                />
-              </div>
-            </div>
 
-            {/* Modal buttons - Centralized */}
-            <div className="flex justify-center space-x-6 mt-8">
-              <button
-                className="py-2 px-4 bg-green-500 rounded-lg hover:bg-green-600 transition duration-200"
-                onClick={handleCreateEvent} // Handle form submission
-              >
-                Create
-              </button>
-              <button
-                className="py-2 px-4 bg-red-500 rounded-lg hover:bg-red-600 transition duration-200"
-                onClick={() => setShowModal(false)} // Handle modal close
-              >
-                Cancel
-              </button>
+              {/* Modal buttons - Centralized */}
+              <div className="flex justify-center space-x-6 mt-8">
+                <button
+                  className="py-2 px-4 bg-green-500 rounded-lg hover:bg-green-600 transition duration-200"
+                  onClick={handleCreateEvent} // Handle form submission
+                >
+                  Create
+                </button>
+                <button
+                  className="py-2 px-4 bg-red-500 rounded-lg hover:bg-red-600 transition duration-200"
+                  onClick={() => setShowModal(false)} // Handle modal close
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Modal for Deleting Events */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-11/12 max-w-lg max-h-[90vh] overflow-y-auto hide-scrollbar">
-            <h2 className="text-3xl font-bold mb-6">Delete Events</h2>
-            {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
-            <ul className="space-y-4">
-              {events.map((event) => (
-                <li key={event.event_id} className="flex justify-between items-center p-4 bg-gray-700 rounded-lg">
-                  <span>{event.event_name}</span>
-                  <button
-                    onClick={() => deleteEvent(event.event_id)}
-                    className="py-1 px-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-200"
-                  >
-                    Delete
-                  </button>
-                </li>
-              ))}
-            </ul>
-
-            <div className="flex justify-center space-x-6 mt-8">
-              <button
-                className="py-2 px-4 bg-red-500 rounded-lg hover:bg-red-600 transition duration-200"
-                onClick={() => setShowDeleteModal(false)} // Handle modal close
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {showMembersModal && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-gray-800 p-8 rounded-lg shadow-lg max-w-md w-full">
-            <h2 className="text-3xl font-bold mb-6">Delete Members</h2>
-            <div className="max-h-60 overflow-y-auto"> {/* Set a max height and enable scrolling */}
-              <ul className="space-y-2"> {/* Space between each member item */}
-                {members.map((member) => (
-                  <li key={member.id} className="flex justify-between items-center p-4 bg-gray-700 rounded-md shadow">
-                    <span className="text-gray-200">{member.name}</span>
+        {/* Modal for Deleting Events */}
+        {showDeleteModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+            <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-11/12 max-w-lg max-h-[90vh] overflow-y-auto hide-scrollbar">
+              <h2 className="text-3xl font-bold mb-6">Delete Events</h2>
+              {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
+              <ul className="space-y-4">
+                {events.map((event) => (
+                  <li key={event.event_id} className="flex justify-between items-center p-4 bg-gray-700 rounded-lg">
+                    <span>{event.event_name}</span>
                     <button
-                      onClick={() => handleDeleteMember(member.uid)}
-                      className="bg-red-600 text-white p-2 rounded hover:bg-red-500 transition duration-300"
+                      onClick={() => deleteEvent(event.event_id)}
+                      className="py-1 px-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-200"
                     >
                       Delete
                     </button>
                   </li>
                 ))}
               </ul>
+
+              <div className="flex justify-center space-x-6 mt-8">
+                <button
+                  className="py-2 px-4 bg-red-500 rounded-lg hover:bg-red-600 transition duration-200"
+                  onClick={() => setShowDeleteModal(false)} // Handle modal close
+                >
+                  Close
+                </button>
+              </div>
             </div>
-            <button
-              onClick={() => setShowMembersModal(false)}
-              className="bg-red-500 text-white p-2 rounded hover:bg-gray-500 transition duration-300 mt-4"
-            >
-              Close
-            </button>
           </div>
-        </div>
+        )}
+        {showMembersModal && (
+          <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="bg-gray-800 p-8 rounded-lg shadow-lg max-w-md w-full">
+              <h2 className="text-3xl font-bold mb-6">Delete Members</h2>
+              <div className="max-h-60 overflow-y-auto"> {/* Set a max height and enable scrolling */}
+                <ul className="space-y-2"> {/* Space between each member item */}
+                  {members.map((member) => (
+                    <li key={member.id} className="flex justify-between items-center p-4 bg-gray-700 rounded-md shadow">
+                      <span className="text-gray-200">{member.name}</span>
+                      <button
+                        onClick={() => handleDeleteMember(member.uid)}
+                        className="bg-red-600 text-white p-2 rounded hover:bg-red-500 transition duration-300"
+                      >
+                        Delete
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <button
+                onClick={() => setShowMembersModal(false)}
+                className="bg-red-500 text-white p-2 rounded hover:bg-gray-500 transition duration-300 mt-4"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+        </>
+      ):
+      (
+        <main class="h-screen flex items-center justify-center">
+          <p class="text-4xl font-bold white">Please Log In</p>
+        </main>
       )}
 
       {/* CSS for hiding scrollbar */}

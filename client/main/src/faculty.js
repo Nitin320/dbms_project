@@ -20,11 +20,16 @@ const Faculty = () => {
   const [members, setMembers] = useState([]); // Members data state
   const [error, setError] = useState(null); // Error state for fetching
 
+  const [authenticate, setAuthenticate] = useState(false)
+
   useEffect(() => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
     }, 3500);
+    if(localStorage.getItem('userRole') == "Faculty"){
+      setAuthenticate(true)
+    }
   }, []);
 
   const fetchEvents = async () => {
@@ -177,177 +182,185 @@ const Faculty = () => {
         <GradientBackground />
       </div>
 
-      {loading ? (
-        <div className="absolute inset-0 flex justify-center items-center z-50">
-          <div className="relative flex items-center justify-center p-6 rounded-full z-50">
-            <Lottie className="h-64 w-64" animationData={animationData} />
-          </div>
-        </div>
-      ) : (
+      {authenticate ? (
       <>
-      <div className="w-full py-4 px-8 flex justify-end bg-gray-800">
-        <a href='/profile'>
-          <FaUserCircle className="text-3xl text-gray-300 hover:text-white transition duration-200 ease-in-out cursor-pointer" />
-        </a>
-      </div>
-      <div className="flex-grow flex items-center justify-center w-full">
-        {/* Grid layout for the boxes */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
-          {functionalities.slice(0, 2).map((func) => (
+        {loading ? (
+          <div className="absolute inset-0 flex justify-center items-center z-50">
+            <div className="relative flex items-center justify-center p-6 rounded-full z-50">
+              <Lottie className="h-64 w-64" animationData={animationData} />
+            </div>
+          </div>
+        ) : (
+        <>
+        <div className="w-full py-4 px-8 flex justify-end bg-gray-800">
+          <a href='/profile'>
+            <FaUserCircle className="text-3xl text-gray-300 hover:text-white transition duration-200 ease-in-out cursor-pointer" />
+          </a>
+        </div>
+        <div className="flex-grow flex items-center justify-center w-full">
+          {/* Grid layout for the boxes */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
+            {functionalities.slice(0, 2).map((func) => (
+              <div
+                key={func.id}
+                className="relative group p-8 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg"
+                onClick={func.id === 1 ? handleChangeLeadClick : handleChangeCoLeadClick} // Trigger respective modals
+              >
+                <h3 className="text-2xl font-semibold mb-4">{func.name}</h3>
+                <p className="text-gray-400">{func.description}</p>
+                <div className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-30 transition duration-300 ease-in-out rounded-lg"></div>
+              </div>
+            ))}
+
+            {/* Approve Events block */}
             <div
-              key={func.id}
-              className="relative group p-8 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg"
-              onClick={func.id === 1 ? handleChangeLeadClick : handleChangeCoLeadClick} // Trigger respective modals
+              key={functionalities[2].id}
+              className="relative group md:col-span-2 flex items-center justify-center p-8 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg"
+              onClick={handleApproveEventsClick} // Trigger modal when clicked
             >
-              <h3 className="text-2xl font-semibold mb-4">{func.name}</h3>
-              <p className="text-gray-400">{func.description}</p>
+              <div className="text-center">
+                <h3 className="text-2xl font-semibold mb-4">{functionalities[2].name}</h3>
+                <p className="text-gray-400">{functionalities[2].description}</p>
+              </div>
               <div className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-30 transition duration-300 ease-in-out rounded-lg"></div>
             </div>
-          ))}
-
-          {/* Approve Events block */}
-          <div
-            key={functionalities[2].id}
-            className="relative group md:col-span-2 flex items-center justify-center p-8 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg"
-            onClick={handleApproveEventsClick} // Trigger modal when clicked
-          >
-            <div className="text-center">
-              <h3 className="text-2xl font-semibold mb-4">{functionalities[2].name}</h3>
-              <p className="text-gray-400">{functionalities[2].description}</p>
-            </div>
-            <div className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-30 transition duration-300 ease-in-out rounded-lg"></div>
           </div>
         </div>
-      </div>
 
-      {/* Approve Events Modal */}
-      {showApproveModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-11/12 max-w-3xl max-h-[90vh] overflow-y-auto hide-scrollbar">
-            <h2 className="text-3xl font-bold mb-6">Approve Events</h2>
-            {error ? (
-              <p className="text-red-500">{error}</p>
-            ) : (
-              <div className="space-y-4">
-                {events.length > 0 ? (
-                  events.map((event) => (
-                    <div key={event.id} className="flex justify-between items-center bg-gray-700 p-4 rounded-lg">
-                      <div>
-                        <h3 className="text-xl font-semibold">{event.event_name}</h3>
+        {/* Approve Events Modal */}
+        {showApproveModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+            <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-11/12 max-w-3xl max-h-[90vh] overflow-y-auto hide-scrollbar">
+              <h2 className="text-3xl font-bold mb-6">Approve Events</h2>
+              {error ? (
+                <p className="text-red-500">{error}</p>
+              ) : (
+                <div className="space-y-4">
+                  {events.length > 0 ? (
+                    events.map((event) => (
+                      <div key={event.id} className="flex justify-between items-center bg-gray-700 p-4 rounded-lg">
+                        <div>
+                          <h3 className="text-xl font-semibold">{event.event_name}</h3>
+                        </div>
+                        <div className="flex space-x-4">
+                          <button
+                            className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg"
+                            onClick={() => handleEventAction(event.event_id, 'approve')}
+                          >
+                            Approve
+                          </button>
+                          <button
+                            className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
+                            onClick={() => handleEventAction(event.event_id, 'reject')}
+                          >
+                            Reject
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex space-x-4">
+                    ))
+                  ) : (
+                    <p>No events available for approval.</p>
+                  )}
+                </div>
+              )}
+              <div className="flex justify-center mt-6">
+                <button
+                  className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
+                  onClick={() => setShowApproveModal(false)} // Close modal
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Change Lead Modal */}
+        {showChangeLeadModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+            <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-11/12 max-w-3xl max-h-[90vh] overflow-y-auto hide-scrollbar">
+              <h2 className="text-3xl font-bold mb-6">Change Lead</h2>
+              {error ? (
+                <p className="text-red-500">{error}</p>
+              ) : (
+                <div className="space-y-4">
+                  {members.length > 0 ? (
+                    members.map((member) => (
+                      <div key={member.id} className="flex justify-between items-center bg-gray-700 p-4 rounded-lg">
+                        <div>
+                          <h3 className="text-xl font-semibold">{member.name}</h3>
+                        </div>
                         <button
-                          className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg"
-                          onClick={() => handleEventAction(event.event_id, 'approve')}
+                          className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
+                          onClick={() => handleAssignLead(member.uid)}
                         >
-                          Approve
+                          Assign Lead
                         </button>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No members available to assign as lead.</p>
+                  )}
+                </div>
+              )}
+              <div className="flex justify-center mt-6">
+                <button
+                  className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
+                  onClick={() => setShowChangeLeadModal(false)} // Close modal
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Change Co-Lead Modal */}
+        {showChangeCoLeadModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+            <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-11/12 max-w-3xl max-h-[90vh] overflow-y-auto hide-scrollbar">
+              <h2 className="text-3xl font-bold mb-6">Change Co-Lead</h2>
+              {error ? (
+                <p className="text-red-500">{error}</p>
+              ) : (
+                <div className="space-y-4">
+                  {members.length > 0 ? (
+                    members.map((member) => (
+                      <div key={member.id} className="flex justify-between items-center bg-gray-700 p-4 rounded-lg">
+                        <div>
+                          <h3 className="text-xl font-semibold">{member.name}</h3>
+                        </div>
                         <button
-                          className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
-                          onClick={() => handleEventAction(event.event_id, 'reject')}
+                          className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
+                          onClick={() => handleAssignCoLead(member.uid)}
                         >
-                          Reject
+                          Assign Co-Lead
                         </button>
                       </div>
-                    </div>
-                  ))
-                ) : (
-                  <p>No events available for approval.</p>
-                )}
+                    ))
+                  ) : (
+                    <p>No members available to assign as co-lead.</p>
+                  )}
+                </div>
+              )}
+              <div className="flex justify-center mt-6">
+                <button
+                  className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
+                  onClick={() => setShowChangeCoLeadModal(false)} // Close modal
+                >
+                  Close
+                </button>
               </div>
-            )}
-            <div className="flex justify-center mt-6">
-              <button
-                className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
-                onClick={() => setShowApproveModal(false)} // Close modal
-              >
-                Close
-              </button>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Change Lead Modal */}
-      {showChangeLeadModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-11/12 max-w-3xl max-h-[90vh] overflow-y-auto hide-scrollbar">
-            <h2 className="text-3xl font-bold mb-6">Change Lead</h2>
-            {error ? (
-              <p className="text-red-500">{error}</p>
-            ) : (
-              <div className="space-y-4">
-                {members.length > 0 ? (
-                  members.map((member) => (
-                    <div key={member.id} className="flex justify-between items-center bg-gray-700 p-4 rounded-lg">
-                      <div>
-                        <h3 className="text-xl font-semibold">{member.name}</h3>
-                      </div>
-                      <button
-                        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
-                        onClick={() => handleAssignLead(member.uid)}
-                      >
-                        Assign Lead
-                      </button>
-                    </div>
-                  ))
-                ) : (
-                  <p>No members available to assign as lead.</p>
-                )}
-              </div>
-            )}
-            <div className="flex justify-center mt-6">
-              <button
-                className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
-                onClick={() => setShowChangeLeadModal(false)} // Close modal
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Change Co-Lead Modal */}
-      {showChangeCoLeadModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-11/12 max-w-3xl max-h-[90vh] overflow-y-auto hide-scrollbar">
-            <h2 className="text-3xl font-bold mb-6">Change Co-Lead</h2>
-            {error ? (
-              <p className="text-red-500">{error}</p>
-            ) : (
-              <div className="space-y-4">
-                {members.length > 0 ? (
-                  members.map((member) => (
-                    <div key={member.id} className="flex justify-between items-center bg-gray-700 p-4 rounded-lg">
-                      <div>
-                        <h3 className="text-xl font-semibold">{member.name}</h3>
-                      </div>
-                      <button
-                        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
-                        onClick={() => handleAssignCoLead(member.uid)}
-                      >
-                        Assign Co-Lead
-                      </button>
-                    </div>
-                  ))
-                ) : (
-                  <p>No members available to assign as co-lead.</p>
-                )}
-              </div>
-            )}
-            <div className="flex justify-center mt-6">
-              <button
-                className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
-                onClick={() => setShowChangeCoLeadModal(false)} // Close modal
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      </>
+        )}
+        </>
+        )}
+        </>
+      ):(
+        <main class="h-screen flex items-center justify-center">
+          <p class="text-4xl font-bold white">Please Log In</p>
+        </main>
       )}
     </div>
   );
