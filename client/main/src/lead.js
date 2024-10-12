@@ -36,7 +36,7 @@ const Lead = () => {
   const functionalities = [
     { id: 1, name: 'Create Event', description: 'Click here to create an event' },
     { id: 2, name: 'Delete Event', description: 'Click here to delete an event' },
-    { id: 4, name: 'Delete Members', description: 'Click here to remove a member' }, // Removed "Add Members"
+    { id: 4, name: 'Remove Members', description: 'Click here to remove a member' }, // Removed "Add Members"
   ];
 
   const [loading, setLoading] = useState(false);
@@ -248,11 +248,20 @@ const Lead = () => {
           </div>
         ) : (
           <>
-            <div className="w-full py-4 px-8 flex justify-end bg-gray-800 z-20">
-              <a href='/profile'>
-                <FaUserCircle className="text-3xl text-gray-300 hover:text-white transition duration-200 ease-in-out cursor-pointer" />
-              </a>
-            </div>
+          <div className="w-full py-4 px-8 flex justify-between items-center bg-gray-800">
+                <a href="./signin"
+                  className="text-xl text-gray-300 hover:text-red-800 transition duration-200 ease-in-out cursor-pointer">
+                  Logout
+                </a>
+                <h1 className="text-3xl font-bold text-white">Club Sync</h1>
+                <a href="/profile">
+                  <FaUserCircle className="text-3xl text-gray-300 hover:text-white transition duration-200 ease-in-out cursor-pointer" />
+                </a>
+              </div>
+
+              <div className="flex-grow flex items-center justify-center w-full">
+                {/* Your existing grid and content goes here */}
+              </div>
 
             {/* Main content with centralized functionality boxes */}
             <div className="w-full max-w-6xl mt-16 p-8 flex flex-col items-center z-20">

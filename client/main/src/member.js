@@ -43,7 +43,6 @@ const Member = () => {
 
   const [authenticate, setAuthenticate] = useState(false)
 
-
   useEffect(() => {
     setLoading(true);
     // Simulate loading animation for 3.5 seconds
@@ -73,37 +72,44 @@ const Member = () => {
           </div>
         ) : (
           <>
-            {/* Header Section with Profile Icon */}
-            <div className="w-full py-4 px-8 flex justify-end bg-gray-800 z-20">
-              <a href='/profile'>
+            <div className="w-full py-4 px-8 flex justify-between items-center bg-gray-800">
+              <a href="./signin"
+                className="text-xl text-gray-300 hover:text-red-800 transition duration-200 ease-in-out cursor-pointer">
+                Logout
+              </a>
+              <h1 className="text-3xl font-bold text-white">Club Sync</h1>
+              <a href="/profile">
                 <FaUserCircle className="text-3xl text-gray-300 hover:text-white transition duration-200 ease-in-out cursor-pointer" />
               </a>
             </div>
 
-            {/* Main content with functionality box for viewing events */}
-            <div className="w-full max-w-md mt-20 p-4 z-20"> {/* Adjusted width and padding */}
-              {functionalities.map((func) => (
-                <a href='/memberEvents' key={func.id}>
-                  <div
-                    className="relative group p-8 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg flex items-center justify-center"
-                  >
-                    <div className="text-center">
-                      <h3 className="text-2xl font-semibold mb-4">{func.name}</h3> {/* Reduced text size */}
-                      <p className="text-gray-400">{func.description}</p> {/* Reduced text size */}
-                    </div>
+            {/* Centralizing the main content */}
+            <div className="flex-grow flex flex-col items-center justify-center w-full">
+              {/* Main content with functionality box for viewing events */}
+              <div className="w-full max-w-md p-4 z-20">
+                {functionalities.map((func) => (
+                  <a href='/memberEvents' key={func.id}>
+                    <div
+                      className="relative group p-8 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg flex items-center justify-center"
+                    >
+                      <div className="text-center">
+                        <h3 className="text-2xl font-semibold mb-4">{func.name}</h3> {/* Reduced text size */}
+                        <p className="text-gray-400">{func.description}</p> {/* Reduced text size */}
+                      </div>
 
-                    {/* Hover effect */}
-                    <div className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-30 transition duration-300 ease-in-out rounded-lg"></div>
-                  </div>
-                </a>
-              ))}
+                      {/* Hover effect */}
+                      <div className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-30 transition duration-300 ease-in-out rounded-lg"></div>
+                    </div>
+                  </a>
+                ))}
+              </div>
             </div>
           </>
         )}
       </>
-      ):(
-        <main class="h-screen flex flex-col items-center justify-center space-y-8">
-          <p class="text-4xl font-bold text-white">Please Sign In</p>
+      ) : (
+        <main className="h-screen flex flex-col items-center justify-center space-y-8">
+          <p className="text-4xl font-bold text-white">Please Sign In</p>
           
           <a href='/signin'>
             <motion.div
@@ -126,7 +132,6 @@ const Member = () => {
             </motion.div>
           </a>
         </main>
-
       )}
     </div>
   );
