@@ -18,7 +18,7 @@ const SignIn = () => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-    }, 3500);
+    }, 2600);
   }, []);
 
   // Handle form submission
@@ -103,7 +103,7 @@ const SignIn = () => {
         <div className="absolute inset-0 flex justify-center items-center z-50">
           {/* Background Overlay */}
           <div className="relative flex items-center justify-center p-6 rounded-full z-50">
-            <Lottie className="h-32 w-32" animationData={animationData} />
+            <Lottie className="h-32 w-32" animationData={animationData} speed={2} />
           </div>
         </div>
       ) : (

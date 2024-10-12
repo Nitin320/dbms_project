@@ -20,7 +20,7 @@ const Signup = () => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-    }, 3500);
+    }, 2600);
   }, []);
 
   // Handle form submission
