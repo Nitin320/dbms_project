@@ -5,6 +5,7 @@ import Lottie from 'lottie-react';
 import animationData from "./assets/pages.json";
 import GradientBackground from './gradientBackground';
 import { motion } from 'framer-motion';   
+import SignIn from './signin';
 
 const buttonVariants = {
   initial: { 
@@ -219,11 +220,20 @@ const Faculty = () => {
           </div>
         ) : (
         <>
-        <div className="w-full py-4 px-8 flex justify-end bg-gray-800">
-          <a href='/profile'>
-            <FaUserCircle className="text-3xl text-gray-300 hover:text-white transition duration-200 ease-in-out cursor-pointer" />
-          </a>
-        </div>
+        <div className="w-full py-4 px-8 flex justify-between items-center bg-gray-800">
+                <a href="./signin"
+                  className="text-xl text-gray-300 hover:text-red-800 transition duration-200 ease-in-out cursor-pointer">
+                  Logout
+                </a>
+                <h1 className="text-3xl font-bold text-white">Club Sync</h1>
+                <a href="/profile">
+                  <FaUserCircle className="text-3xl text-gray-300 hover:text-white transition duration-200 ease-in-out cursor-pointer" />
+                </a>
+              </div>
+
+              <div className="flex-grow flex items-center justify-center w-full">
+                {/* Your existing grid and content goes here */}
+              </div>
         <div className="flex-grow flex items-center justify-center w-full">
           {/* Grid layout for the boxes */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
