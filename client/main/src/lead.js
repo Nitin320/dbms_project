@@ -4,6 +4,33 @@ import { FaUserCircle } from 'react-icons/fa';
 import Lottie from 'lottie-react';
 import animationData from "./assets/pages.json";
 import GradientBackground from './gradientBackground';
+import { motion } from 'framer-motion';   
+
+const buttonVariants = {
+  initial: { 
+    scale: 1, 
+    borderColor: 'transparent', 
+    boxShadow: '0 0 0 rgba(255, 255, 255, 0)' 
+  },
+  hover: { 
+    scale: 1.05, 
+    borderColor: '#ffffff', // Change border color on hover
+    boxShadow: '0 0 10px rgba(255, 255, 255, 0.5)', // Add shadow on hover
+    transition: { 
+      type: 'spring', 
+      stiffness: 300, 
+      damping: 20 // Adjust damping for smoother return to the original state
+    }
+  },
+  tap: { 
+    scale: 0.95, 
+    transition: { 
+      type: 'spring', 
+      stiffness: 300,
+      damping: 20 // Maintain damping for smooth tap response
+    }
+  },
+};
 
 const Lead = () => {
   const functionalities = [
@@ -402,8 +429,29 @@ const Lead = () => {
         </>
       ):
       (
-        <main class="h-screen flex items-center justify-center">
-          <p class="text-4xl font-bold white">Please Log In</p>
+        <main class="h-screen flex flex-col items-center justify-center space-y-8">
+          <p class="text-4xl font-bold text-white">Please Sign In</p>
+          
+          <a href='/signin'>
+            <motion.div
+              variants={buttonVariants}
+              initial="initial"
+              whileHover="hover"
+              whileTap="tap"
+              className="relative p-4 rounded-lg cursor-pointer overflow-hidden border-2 border-transparent w-52"
+            >
+              <motion.span 
+                className="absolute inset-0 border-2 border-gray-400 rounded-lg" 
+                variants={buttonVariants}
+                initial={{ scale: 0 }}
+                whileHover={{ scale: 1 }}
+                transition={{ duration: 0.3 }}
+              />
+              <div className="relative z-10 bg-gray-700 hover:bg-gray-600 transition duration-200 ease-in-out p-4 rounded-lg">
+                <h2 className="text-lg font-semibold text-center">Sign In</h2>
+              </div>
+            </motion.div>
+          </a>
         </main>
       )}
 

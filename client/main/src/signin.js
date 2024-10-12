@@ -173,6 +173,12 @@ const SignIn = () => {
               >
                 Sign In
               </button>
+
+              {/* Signup Link */}
+              <div className="text-center text-sm mt-4">
+                <span className="text-gray-300">Don't have an account? </span>
+                <a href="/signup" className="text-blue-400 hover:underline">Sign up</a>
+              </div>
             </form>
           </div>
         </div>
