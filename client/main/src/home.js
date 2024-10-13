@@ -33,9 +33,6 @@ const buttonVariants = {
 const Home = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white px-4 relative">
-      {/* ClubSync Animation */}
-      
-        
 
       {/* Transition "ClubSync" to the top after conjoining in the center */}
       <motion.div
@@ -44,8 +41,8 @@ const Home = () => {
         transition={{ duration: 0.8, delay: 1.5, ease: 'easeInOut' }} // Delay added to hold in the center before moving up
         className="absolute text-4xl font-bold text-center flex"
       >
-        <span className="text-blue-400">Club</span>
-        <span className="text-pink-400">Sync</span>
+        <span className="text-blue-400 text-5xl">Club</span>
+        <span className="text-pink-400 text-5xl">Sync</span>
       </motion.div>
 
       {/* Main Lottie Animation Placeholder */}
@@ -55,7 +52,7 @@ const Home = () => {
         transition={{ duration: 0.8, delay: 2.8 }} // Adjusted delay to start after "ClubSync" moves up
         className="mb-8"
       >
-        <Lottie animationData={animationData} className="h-64 w-64" />
+        <Lottie animationData={animationData} className="mt-5 h-72 w-72" />
       </motion.div>
 
       {/* Buttons Row */}
