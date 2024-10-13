@@ -2,6 +2,7 @@ from flask import render_template, request, jsonify
 import re
 import base64
 from models import user_credentials, user_details, attendance, clubs, events
+from datetime import datetime
 
 def get_clubid_from_clubname(club):
     club_details = clubs.query.all()
@@ -271,14 +272,14 @@ def register_routes(app, db):
             }
         }), 200
     
-    @app.route('/api/create_event', methods=['GET', 'POST'])
+    @app.route('/api/create_event', methods=['GET', 'POST'], endpoint = 'create_event')
     def create_event():
         try:
             data = request.get_json()
             print(f"Received data: {data}")  # Log the incoming data
 
             # Extract event details from the request
-            club = data.get('club')  # Check if this is None or empty
+            club = data.get('club')
             club_id = get_clubid_from_clubname(club)
             event_name = data.get('eventName')
             start_date = data.get('startDate')
@@ -292,6 +293,23 @@ def register_routes(app, db):
                 print(f"Missing required fields: {data}")
                 return jsonify({
                     "message": "Event name, start date, venue, and club ID are required."
+                }), 400
+
+            # Convert start_date and end_date to datetime objects for comparison
+            start_date_obj = datetime.strptime(start_date, '%Y-%m-%d')
+            end_date_obj = datetime.strptime(end_date, '%Y-%m-%d')
+            current_date = datetime.now()
+
+            # Check if the start date is before the end date
+            if start_date_obj >= end_date_obj:
+                return jsonify({
+                    "message": "The start date must be before the end date."
+                }), 400
+
+            # Check if the start date is in the future
+            if start_date_obj < current_date:
+                return jsonify({
+                    "message": "The start date must be after the current date."
                 }), 400
 
             # Create a new event record
