@@ -36,8 +36,7 @@ const buttonVariants = {
 const Faculty = () => {
   const functionalities = [
     { id: 1, name: 'Change Lead', description: 'Click here to change the lead' },
-    { id: 2, name: 'Change Co-Lead', description: 'Click here to change the co-lead' },
-    { id: 3, name: 'Approve Events', description: 'Click here to approve events' },
+    { id: 2, name: 'Approve Events', description: 'Click here to approve events' },
   ];
 
   const [loading, setLoading] = useState(false);
@@ -236,7 +235,7 @@ const Faculty = () => {
               </div>
         <div className="flex-grow flex items-center justify-center w-full">
           {/* Grid layout for the boxes */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-8 w-full max-w-4xl">
             {functionalities.slice(0, 2).map((func) => (
               <div
                 key={func.id}
@@ -249,18 +248,6 @@ const Faculty = () => {
               </div>
             ))}
 
-            {/* Approve Events block */}
-            <div
-              key={functionalities[2].id}
-              className="relative group md:col-span-2 flex items-center justify-center p-8 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer shadow-lg"
-              onClick={handleApproveEventsClick} // Trigger modal when clicked
-            >
-              <div className="text-center">
-                <h3 className="text-2xl font-semibold mb-4">{functionalities[2].name}</h3>
-                <p className="text-gray-400">{functionalities[2].description}</p>
-              </div>
-              <div className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-30 transition duration-300 ease-in-out rounded-lg"></div>
-            </div>
           </div>
         </div>
 
