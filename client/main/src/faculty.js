@@ -224,7 +224,10 @@ const Faculty = () => {
                   className="text-xl text-gray-300 hover:text-red-800 transition duration-200 ease-in-out cursor-pointer">
                   Logout
                 </a>
-                <h1 className="text-3xl font-bold text-white">Club Sync</h1>
+                <div className="font-bold text-white">
+                  <span className="text-blue-400 text-3xl">Club</span>
+                  <span className="text-pink-400 text-3xl">Sync</span>
+                </div>
                 <a href="/profile">
                   <FaUserCircle className="text-3xl text-gray-300 hover:text-white transition duration-200 ease-in-out cursor-pointer" />
                 </a>
